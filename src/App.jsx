@@ -1,14 +1,25 @@
-import './App.css'
-import NavHeader from './components/header'
-import Cards from './components/molecules/card'
+import { BrowserRouter, Routes, Route} from 'react-router-dom';
+import Home from './components/pages/home';
+import NavHeader from './components/molecules/header';
+import Contato from './components/pages/Contato';
+import Produto from './components/pages/Produto';
 
-function App() {
+
+const App = () => {
   return (
     <>
-    <NavHeader />
-
+    <NavHeader /> 
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/Contato" element={<Contato />} />
+        <Route path="/Produto/:id" element={<Produto />} />
+      </Routes>
+    </BrowserRouter>
     </>
-  )
+   
+  );
 }
 
-export default App
+export default App;
+          
