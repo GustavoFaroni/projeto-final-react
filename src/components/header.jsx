@@ -3,9 +3,9 @@ import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 function NavHeader() {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed"> 
+      <AppBar position="fixed" color='success'> 
       <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
             Loja legal de anabolizantes
           </Typography>
           
