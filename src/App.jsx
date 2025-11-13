@@ -8,8 +8,8 @@ import Produto from './components/pages/Produto';
 const App = () => {
   return (
     <>
-    <NavHeader /> 
     <BrowserRouter>
+    <NavHeader /> 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/Contato" element={<Contato />} />
