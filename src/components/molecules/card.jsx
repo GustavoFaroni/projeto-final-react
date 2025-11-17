@@ -3,8 +3,12 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
+import { Button } from '@mui/material';
+import { use } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export default function ActionAreaCard({ imagem, nome, sobrenome , cargo, dtnascimento }) {
+export default function ActionAreaCard({ imagem, nome, sobrenome , cargo, dtnascimento, produtoId}) {
+  const navigate = useNavigate();
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardActionArea>
@@ -24,8 +28,10 @@ export default function ActionAreaCard({ imagem, nome, sobrenome , cargo, dtnasc
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             {cargo}
           </Typography>
+             
         </CardContent>
       </CardActionArea>
+      <Button variant="contained" onClick={() => navigate(`/Produto/${produtoId}`)} >Comprar</Button>
     </Card>
   );
 }
