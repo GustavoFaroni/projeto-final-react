@@ -1,20 +1,54 @@
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import React from 'react';
+import { AppBar, Toolbar, Button, Box, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+
+// Ícones
+import SearchIcon from '@mui/icons-material/Search';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+
+// Sua Logo
+import logoImg from '../organism/logo.png'; 
 
 function NavHeader() {
   const navigate = useNavigate();
+
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" color='default'> 
-      <Toolbar>
-          <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
-            <img src='.\src\components\organism\logo.png' onClick={() => navigate('/')} />
-          </Typography>
+      <AppBar 
+        position="fixed" 
+        elevation={0} 
+        sx={{ bgcolor: 'white', color: 'text.primary', borderBottom: '1px solid #f0f0f0' }}
+      >
+        <Toolbar>
           
-          <Box>
-            <Button color="inherit" onClick={() => navigate('/Contato')}>Sobre</Button>
-            <Button color="inherit" onClick={() => navigate('/Contato')} >Contato</Button>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <img 
+              src={logoImg} 
+              alt="Logo"
+              onClick={() => navigate('/')} 
+              style={{ height: '40px', cursor: 'pointer' }} 
+            />
           </Box>
+
+          <Box sx={{ 
+            flexGrow: 1, 
+            display: { xs: 'flex', md: 'flex' }, 
+            justifyContent: 'center', 
+            gap: 4
+          }}>
+            <Button color="inherit" onClick={() => navigate('/')}>Home</Button>
+            <Button color="inherit" onClick={() => navigate('/Contato')}>Sobre</Button>
+            <Button color="inherit" onClick={() => navigate('/Contato')}>Contato</Button>
+          </Box>
+
+
+          <Box sx={{ display: 'flex', gap: 0.5 }}>
+            <IconButton color="inherit"><SearchIcon /></IconButton>
+            <IconButton color="inherit"><PersonOutlineIcon /></IconButton>
+            <IconButton color="inherit"><ShoppingCartOutlinedIcon /></IconButton>
+          </Box>
+
         </Toolbar>
       </AppBar>
     </Box>
