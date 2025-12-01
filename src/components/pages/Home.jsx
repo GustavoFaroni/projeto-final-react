@@ -16,19 +16,25 @@ const Home = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get('https://node-vercel-app-rho.vercel.app/api/funcionarios')
-      .then((response) => setData(response.data))
+    axios.get('https://node-vercel-app-rho.vercel.app/api/produtos')
+      .then((response) => setData(response.data.produtos))
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
   return (
     <Box sx={{ bgcolor: '#fff', minHeight: '100vh', pb: 8, pt: { xs: 10, md: 12 }, display: 'flex', justifyContent: 'center' }}>
       
-      <Container maxWidth="lg" sx={{ width: '100%' }}>
+      <Container maxWidth={false} sx={{ width: '100%' }}>
         
-        <Grid container spacing={4} alignItems="center" justifyContent="center" sx={{ mt: 5, mb: 10 }}>
+        <Grid
+          container
+          spacing={4}
+          alignItems="center"
+          justifyContent="center"
+          sx={{ mt: 5, mb: 10 }}
+        >
           
-          <Grid item xs={12} md={6}>
+          <Grid>
             <Typography 
               variant="h2" 
               component="h1" 
@@ -45,17 +51,15 @@ const Home = () => {
 
           </Grid>
 
-          <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Grid  sx={{ display: 'flex', justifyContent: 'center'}}>
             <Box 
               component="img"
-              src="https://th.bing.com/th/id/OIP.tAa1nO5gLIVCPbcxNXjZQwHaE7?w=263&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
-              alt="Equipe reunida"
+              src="src/components/organism/home.png"
               sx={{ 
-                width: '100%', 
-                maxWidth: '500px', 
+                width: '300px', 
+                maxWidth: '1000px', 
                 height: 'auto', 
-                borderRadius: '20px', 
-                boxShadow: '20px 20px 0px #e8f5e9' 
+                borderRadius: '20px',
               }}
             />
           </Grid>
@@ -66,17 +70,14 @@ const Home = () => {
         </Typography>
 
         <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-          <Grid container spacing={4} justifyContent="center">
+          <Grid columns={3} container spacing={40} justifyContent="center">
             
-            {data?.map((funcionario, index) => (
-              <Grid item xs={12} sm={6} md={4} key={funcionario.id ?? index}>
+            {data?.map((produto) => (
+              <Grid key={produto._id}>
                 <ActionAreaCard
-                  imagem={funcionario.foto}
-                  nome={funcionario.nome}
-                  sobrenome={funcionario.sobrenome}
-                  dtnascimento={funcionario.dtNascimento}
-                  cargo={funcionario.cargo}
-                  produtoId={funcionario._id}
+                  nome={produto.nome}
+                  valor={produto.valor}
+                  produtoId={produto._id}
                 />
               </Grid>
             ))}
