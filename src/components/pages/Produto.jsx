@@ -29,16 +29,10 @@ const Produto = () => {
     axios
       .get(`https://node-vercel-app-rho.vercel.app/api/produtos/${id}`)
       .then((response) => {
-        // A API pode retornar:
-        // 1) o próprio objeto do produto em response.data
-        // 2) { produto: { ... } }
-        // 3) { da
-        // ta: produto } ou outro wrapper
         const d = response.data;
         const produtoObj =
           d && (d.produto || d.data || d) && (d.produto || d.data || d);
 
-        // se houver um array 'produtos' (lista) e o id corresponder, tente localizar
         if (!produtoObj || Array.isArray(produtoObj)) {
           const arr = d.produtos || (Array.isArray(d) ? d : null);
           if (Array.isArray(arr)) {
@@ -50,7 +44,6 @@ const Produto = () => {
           }
         }
 
-        // produtoObj pode ser o produto diretamente ou wrapper contendo campos
         const finalProduto =
           produtoObj && !Array.isArray(produtoObj) && (produtoObj._id ? produtoObj : produtoObj.produto || produtoObj);
 
@@ -67,7 +60,14 @@ const Produto = () => {
 
   if (loading) {
     return (
-      <Box sx={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Box sx={{ 
+        minHeight: '100vh', 
+        width: '100vw',
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        pt: { xs: 8, md: 10 }
+      }}>
         <CircularProgress />
       </Box>
     );
@@ -75,13 +75,19 @@ const Produto = () => {
 
   if (!produto) {
     return (
-      <Box sx={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Typography>Nenhum produto encontrado.</Typography>
+      <Box sx={{ 
+        minHeight: '100vh', 
+        width: '100vw',
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        pt: { xs: 8, md: 10 }
+      }}>
+        <Typography sx={{ color: BRAND_COLOR }}>Nenhum produto encontrado.</Typography>
       </Box>
     );
   }
 
-  // Formatar preços (proteção caso produto.preco seja indefinido)
   const moeda = produto.preco?.moeda || 'BRL';
   const formatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: moeda });
   const precoOriginal = produto.preco?.valor ?? null;
@@ -92,18 +98,26 @@ const Produto = () => {
   const imagens = produto.imagens || (produto.fotos ? produto.fotos : []);
   const mainImage = selectedImage || imagens?.[0]?.url || produto.foto || '';
 
-  // calcular média simples de avaliações se existir
   const avaliacoes = produto.avaliacao || [];
   const ratingValue =
     avaliacoes.length > 0
       ? avaliacoes.reduce((sum, r) => sum + (r.nota || 0), 0) / avaliacoes.length
-      : 4.5; // fallback
+      : 4.5;
 
   return (
-    <Box sx={{ bgcolor: '#f4f4f4', minHeight: '100vh', py: 4 }}>
-      <Container maxWidth="lg" sx={{ bgcolor: 'white', borderRadius: 2, p: 4, boxShadow: 1 }}>
+    <Box sx={{ 
+      bgcolor: '#f4f4f4', 
+      minHeight: '100vh', 
+      width: '100vw',
+      display: 'flex',
+      flexDirection: 'column',
+      pt: { xs: 8, md: 10 },
+      overflow: 'auto',
+      color: BRAND_COLOR
+    }}>
+      <Container maxWidth="lg" sx={{ bgcolor: 'white', borderRadius: 2, p: 4, boxShadow: 1, my: 4 }}>
         {/* título mobile */}
-        <Typography variant="h5" component="h1" sx={{ fontWeight: 500, mb: 2, display: { md: 'none' } }}>
+        <Typography variant="h5" component="h1" sx={{ fontWeight: 500, mb: 2, display: { md: 'none' }, color: BRAND_COLOR }}>
           {produto.nome}
         </Typography>
 
@@ -159,7 +173,7 @@ const Produto = () => {
 
           <Grid item xs={12} md={5}>
             {/* título desktop */}
-            <Typography variant="h5" component="h1" sx={{ fontWeight: 500, mb: 1, display: { xs: 'none', md: 'block' } }}>
+            <Typography variant="h5" component="h1" sx={{ fontWeight: 500, mb: 1, display: { xs: 'none', md: 'block' }, color: BRAND_COLOR }}>
               {produto.nome}
             </Typography>
 
@@ -182,11 +196,11 @@ const Produto = () => {
                 {precoFormatado}
               </Typography>
 
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{ color: BRAND_COLOR }}>
                 no PIX com <strong>5% de desconto</strong>
               </Typography>
 
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1, color: '#666' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1, color: BRAND_COLOR }}>
                 <CreditCardIcon fontSize="small" />
                 <Typography variant="caption">ou até 12x sem juros no cartão</Typography>
               </Box>
@@ -209,7 +223,7 @@ const Produto = () => {
             </Button>
 
             <Paper variant="outlined" sx={{ p: 2, mb: 3, bgcolor: '#f9f9f9', border: 'none' }}>
-              <Typography variant="body2">
+              <Typography variant="body2" sx={{ color: BRAND_COLOR }}>
                 Vendido por <strong>{produto.fornecedor?.nome || 'Fornecedor'}</strong>
                 <br />
                 Entregue por <strong>Minha Loja</strong>
@@ -218,12 +232,12 @@ const Produto = () => {
 
             {/* Frete */}
             <Box>
-              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: BRAND_COLOR }}>
                 Calcule o frete e prazo de entrega
               </Typography>
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <TextField size="small" placeholder="_______-___" sx={{ flexGrow: 1, bgcolor: 'white' }} />
-                <Button variant="outlined" sx={{ textTransform: 'none', borderColor: '#0033c6', color: '#0033c6' }}>
+                <Button variant="outlined" sx={{ textTransform: 'none', borderColor: BRAND_COLOR, color: BRAND_COLOR }}>
                   Consultar
                 </Button>
               </Box>
@@ -233,8 +247,8 @@ const Produto = () => {
 
         {/* Descrição */}
         <Box sx={{ mt: 8 }}>
-          <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>Descrição do produto</Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+          <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: BRAND_COLOR }}>Descrição do produto</Typography>
+          <Typography variant="body1" sx={{ color: BRAND_COLOR, lineHeight: 1.8 }}>
             {produto.descricao || produto.description || 'Sem descrição.'}
           </Typography>
         </Box>
