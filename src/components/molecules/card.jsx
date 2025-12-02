@@ -6,7 +6,7 @@ import CardActionArea from '@mui/material/CardActionArea';
 import { Button } from '@mui/material';
 import { use } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Img from '../organism/home.png';
+import Img from '../organism/produtoCard.png';
 
 export default function ActionAreaCard({nome, valor ,produtoId}) {
   const navigate = useNavigate();
