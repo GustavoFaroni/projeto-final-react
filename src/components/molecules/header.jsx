@@ -7,7 +7,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 
-// Sua Logo
 import logoImg from '../organism/logo.png'; 
 
 function NavHeader() {
