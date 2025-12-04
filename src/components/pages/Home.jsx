@@ -9,7 +9,7 @@ import {
   Button 
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import ActionAreaCard from '../molecules/Card';
+import ActionAreaCard from '../molecules/card';
 
 const Home = () => {
   const [data, setData] = useState([]);

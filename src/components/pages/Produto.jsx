@@ -15,6 +15,8 @@ import {
 } from '@mui/material';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
+import produtoImg from '../organism/produtoCard.png';
+import produtoImg2 from '../organism/produtoCard2.png';
 
 const BRAND_COLOR = '#2e6b36';
 
@@ -22,7 +24,8 @@ const Produto = () => {
   const { id } = useParams();
   const [produto, setProduto] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState(null);
+
+  const [selectedImage, setSelectedImage] = useState(produtoImg);
 
   useEffect(() => {
     setLoading(true);
@@ -38,7 +41,6 @@ const Produto = () => {
           if (Array.isArray(arr)) {
             const found = arr.find((p) => p._id === id || p.id === id);
             setProduto(found || null);
-            setSelectedImage(found?.imagens?.[0]?.url || found?.foto || null);
             setLoading(false);
             return;
           }
@@ -48,7 +50,6 @@ const Produto = () => {
           produtoObj && !Array.isArray(produtoObj) && (produtoObj._id ? produtoObj : produtoObj.produto || produtoObj);
 
         setProduto(finalProduto);
-        setSelectedImage(finalProduto?.imagens?.[0]?.url || finalProduto?.foto || null);
         setLoading(false);
       })
       .catch((error) => {
@@ -95,8 +96,9 @@ const Produto = () => {
   const precoAntigo = precoPromocional ? (precoOriginal ? formatter.format(precoOriginal) : null) : null;
   const precoFormatado = precoPromocional ? formatter.format(precoPromocional) : (precoOriginal ? formatter.format(precoOriginal) : 'R$ 0,00');
 
-  const imagens = produto.imagens || (produto.fotos ? produto.fotos : []);
-  const mainImage = selectedImage || imagens?.[0]?.url || produto.foto || '';
+  // usar só imagens de exemplo (não pegar nada da API)
+  const thumbs = [produtoImg2, produtoImg]; // ordem: miniatura, principal
+  const mainImage = selectedImage || produtoImg;
 
   const avaliacoes = produto.avaliacao || [];
   const ratingValue =
@@ -124,19 +126,19 @@ const Produto = () => {
         <Grid container spacing={4}>
           <Grid item xs={12} md={7}>
             <Box sx={{ display: 'flex', gap: 2 }}>
-              {/* thumbs */}
+              {/* thumbs - usa sempre as imagens de exemplo */}
               <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column', gap: 2 }}>
-                {(imagens.length ? imagens : [ { url: produto.foto } ]).map((imgObj, idx) => (
+                {thumbs.map((img, idx) => (
                   <Box
                     key={idx}
                     component="img"
-                    src={imgObj?.url || imgObj}
-                    onClick={() => setSelectedImage(imgObj?.url || imgObj)}
+                    src={img}
+                    onClick={() => setSelectedImage(img)}
                     sx={{
                       width: 60,
                       height: 60,
                       objectFit: 'contain',
-                      border: (mainImage === (imgObj?.url || imgObj)) ? `2px solid ${BRAND_COLOR}` : '1px solid #ddd',
+                      border: (mainImage === img) ? `2px solid ${BRAND_COLOR}` : '1px solid #ddd',
                       borderRadius: 1,
                       cursor: 'pointer',
                     }}
@@ -144,7 +146,7 @@ const Produto = () => {
                 ))}
               </Box>
 
-              {/* imagem principal */}
+              {/* imagem principal - sempre imagem de exemplo */}
               <Box
                 sx={{
                   flexGrow: 1,
@@ -162,7 +164,7 @@ const Produto = () => {
                   src={mainImage}
                   alt={produto.nome}
                   sx={{
-                    maxWidth: '100%',
+                    maxWidth: '400px',
                     maxHeight: '400px',
                     objectFit: 'contain',
                   }}
