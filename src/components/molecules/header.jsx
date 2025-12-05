@@ -26,7 +26,7 @@ function NavHeader() {
               src={logoImg} 
               alt="Logo"
               onClick={() => navigate('/')} 
-              style={{ height: '40px', cursor: 'pointer' }} 
+              style={{ height: '80px', cursor: 'pointer' }} 
             />
           </Box>
 
