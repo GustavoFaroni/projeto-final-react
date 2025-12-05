@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
+import imagem2 from '../organism/produtoCard.png';
 
 const BRAND_COLOR = '#2e6b36';
 
@@ -116,7 +117,6 @@ const Produto = () => {
       color: BRAND_COLOR
     }}>
       <Container maxWidth="lg" sx={{ bgcolor: 'white', borderRadius: 2, p: 4, boxShadow: 1, my: 4 }}>
-        {/* título mobile */}
         <Typography variant="h5" component="h1" sx={{ fontWeight: 500, mb: 2, display: { md: 'none' }, color: BRAND_COLOR }}>
           {produto.nome}
         </Typography>
@@ -124,7 +124,6 @@ const Produto = () => {
         <Grid container spacing={4}>
           <Grid item xs={12} md={7}>
             <Box sx={{ display: 'flex', gap: 2 }}>
-              {/* thumbs */}
               <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column', gap: 2 }}>
                 {(imagens.length ? imagens : [ { url: produto.foto } ]).map((imgObj, idx) => (
                   <Box
@@ -159,10 +158,10 @@ const Produto = () => {
               >
                 <Box
                   component="img"
-                  src={mainImage}
+                  src={imagem2}
                   alt={produto.nome}
                   sx={{
-                    maxWidth: '100%',
+                    maxWidth: '400px',
                     maxHeight: '400px',
                     objectFit: 'contain',
                   }}
@@ -172,7 +171,6 @@ const Produto = () => {
           </Grid>
 
           <Grid item xs={12} md={5}>
-            {/* título desktop */}
             <Typography variant="h5" component="h1" sx={{ fontWeight: 500, mb: 1, display: { xs: 'none', md: 'block' }, color: BRAND_COLOR }}>
               {produto.nome}
             </Typography>
@@ -226,7 +224,7 @@ const Produto = () => {
               <Typography variant="body2" sx={{ color: BRAND_COLOR }}>
                 Vendido por <strong>{produto.fornecedor?.nome || 'Fornecedor'}</strong>
                 <br />
-                Entregue por <strong>Minha Loja</strong>
+                Entregue por <strong>Natural Supplements</strong>
               </Typography>
             </Paper>
 
