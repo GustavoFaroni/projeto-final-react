@@ -172,7 +172,7 @@ const Produto = () => {
               >
                 <Box
                   component="img"
-                  src={mainImage}
+                  src={imagem2}
                   alt={produto.nome}
                   sx={{
                     maxWidth: '400px',
@@ -238,7 +238,7 @@ const Produto = () => {
               <Typography variant="body2" sx={{ color: BRAND_COLOR }}>
                 Vendido por <strong>{produto.fornecedor?.nome || 'Fornecedor'}</strong>
                 <br />
-                Entregue por <strong>Minha Loja</strong>
+                Entregue por <strong>Natural Supplements</strong>
               </Typography>
             </Paper>
 
