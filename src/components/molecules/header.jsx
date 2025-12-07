@@ -1,15 +1,18 @@
 import React from 'react';
-import { AppBar, Toolbar, Button, Box, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Button, Box, IconButton, Badge } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../molecules/Comprar';
 
 // Ícones
 import SearchIcon from '@mui/icons-material/Search';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 
+
 import logoImg from '../organism/logo.png'; 
 
 function NavHeader() {
+  const { cartCount } = useCart();
   const navigate = useNavigate();
 
   return (
@@ -45,7 +48,8 @@ function NavHeader() {
           <Box sx={{ display: 'flex', gap: 0.5 }}>
             <IconButton color="inherit"><SearchIcon /></IconButton>
             <IconButton color="inherit"><PersonOutlineIcon /></IconButton>
-            <IconButton color="inherit"><ShoppingCartOutlinedIcon /></IconButton>
+            <IconButton color="inherit" onClick={() => navigate('/carrinho')}><Badge badgeContent={cartCount} color="error">
+        <ShoppingCartOutlinedIcon /></Badge></IconButton>
           </Box>
 
         </Toolbar>

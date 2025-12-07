@@ -17,6 +17,7 @@ import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import produtoImg from '../organism/produtoCard.png';
 import produtoImg2 from '../organism/produtoCard2.png';
+import { useCart } from '../molecules/Comprar';
 
 const BRAND_COLOR = '#2e6b36';
 
@@ -24,8 +25,21 @@ const Produto = () => {
   const { id } = useParams();
   const [produto, setProduto] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { adicionarItem } = useCart();
 
   const [selectedImage, setSelectedImage] = useState(produtoImg);
+
+  const handleBuy = () => {
+    if (!produto) return;
+    
+    const itemParaCarrinho = {
+      _id: produto._id,
+      nome: produto.nome,
+      preco: produto.preco?.promocional || produto.preco?.valor,
+      fornecedor: produto.fornecedor?.nome
+    };
+    adicionarItem(itemParaCarrinho);
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -96,8 +110,7 @@ const Produto = () => {
   const precoAntigo = precoPromocional ? (precoOriginal ? formatter.format(precoOriginal) : null) : null;
   const precoFormatado = precoPromocional ? formatter.format(precoPromocional) : (precoOriginal ? formatter.format(precoOriginal) : 'R$ 0,00');
 
-  // usar só imagens de exemplo (não pegar nada da API)
-  const thumbs = [produtoImg2, produtoImg]; // ordem: miniatura, principal
+  const thumbs = [produtoImg, produtoImg2]; 
   const mainImage = selectedImage || produtoImg;
 
   const avaliacoes = produto.avaliacao || [];
@@ -118,7 +131,6 @@ const Produto = () => {
       color: BRAND_COLOR
     }}>
       <Container maxWidth="lg" sx={{ bgcolor: 'white', borderRadius: 2, p: 4, boxShadow: 1, my: 4 }}>
-        {/* título mobile */}
         <Typography variant="h5" component="h1" sx={{ fontWeight: 500, mb: 2, display: { md: 'none' }, color: BRAND_COLOR }}>
           {produto.nome}
         </Typography>
@@ -126,7 +138,6 @@ const Produto = () => {
         <Grid container spacing={4}>
           <Grid item xs={12} md={7}>
             <Box sx={{ display: 'flex', gap: 2 }}>
-              {/* thumbs - usa sempre as imagens de exemplo */}
               <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column', gap: 2 }}>
                 {thumbs.map((img, idx) => (
                   <Box
@@ -146,7 +157,7 @@ const Produto = () => {
                 ))}
               </Box>
 
-              {/* imagem principal - sempre imagem de exemplo */}
+              
               <Box
                 sx={{
                   flexGrow: 1,
@@ -174,7 +185,6 @@ const Produto = () => {
           </Grid>
 
           <Grid item xs={12} md={5}>
-            {/* título desktop */}
             <Typography variant="h5" component="h1" sx={{ fontWeight: 500, mb: 1, display: { xs: 'none', md: 'block' }, color: BRAND_COLOR }}>
               {produto.nome}
             </Typography>
@@ -185,8 +195,7 @@ const Produto = () => {
             </Box>
 
             <Divider sx={{ mb: 3 }} />
-
-            {/* Preço */}
+ 
             <Box sx={{ mb: 3 }}>
               {precoAntigo && (
                 <Typography variant="body2" sx={{ textDecoration: 'line-through', color: '#999' }}>
@@ -212,6 +221,7 @@ const Produto = () => {
               variant="contained"
               fullWidth
               size="large"
+              onClick={handleBuy}
               sx={{
                 bgcolor: BRAND_COLOR,
                 height: '50px',
@@ -232,7 +242,6 @@ const Produto = () => {
               </Typography>
             </Paper>
 
-            {/* Frete */}
             <Box>
               <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: BRAND_COLOR }}>
                 Calcule o frete e prazo de entrega
