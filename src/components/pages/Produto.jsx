@@ -172,7 +172,7 @@ const Produto = () => {
               >
                 <Box
                   component="img"
-                  src={imagem2}
+                  src={mainImage}
                   alt={produto.nome}
                   sx={{
                     maxWidth: '400px',
