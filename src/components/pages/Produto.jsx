@@ -256,7 +256,6 @@ const Produto = () => {
           </Grid>
         </Grid>
 
-        {/* Descrição */}
         <Box sx={{ mt: 8 }}>
           <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: BRAND_COLOR }}>Descrição do produto</Typography>
           <Typography variant="body1" sx={{ color: BRAND_COLOR, lineHeight: 1.8 }}>

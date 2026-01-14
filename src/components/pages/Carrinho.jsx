@@ -13,7 +13,7 @@ const Carrinho = () => {
   const { cartItems, attQuantidade, removerItem } = useCart();
   const navigate = useNavigate();
 
-  // Calcula o total usando "quantidade" (o nome correto da propriedade)
+  
   const total = cartItems.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
   
   const formatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -82,7 +82,7 @@ const Carrinho = () => {
               ))}
             </Box>
 
-            {/* Resumo do Pedido */}
+            
             <Box sx={{ flex: 1 }}>
               <Paper sx={{ p: 3, position: 'sticky', top: 120 }}>
                 <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>Resumo do Pedido</Typography>
