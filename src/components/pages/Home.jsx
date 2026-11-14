@@ -15,7 +15,7 @@ const Home = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get('https://node-vercel-app-rho.vercel.app/api/produtos')
+    axios.get('https://loja-api-ten.vercel.app/api/produtos')
       .then((response) => setData(response.data.produtos))
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
