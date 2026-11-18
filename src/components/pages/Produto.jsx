@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import {
   Box,
   Container,
@@ -13,71 +12,36 @@ import {
   Paper,
   CircularProgress
 } from '@mui/material';
-import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import produtoImg from '../organism/produtoCard.png';
 import produtoImg2 from '../organism/produtoCard2.png';
-import { useCart } from '../molecules/Comprar';
+import { useCart } from '../../context/CartContext';
+import { useProduto } from '../../hooks/useProdutos';
+import { formatarPreco, precoFinal } from '../../utils/preco';
 
-const BRAND_COLOR = '#2e6b36';
+const BRAND_COLOR = 'primary.main';
 
 const Produto = () => {
   const { id } = useParams();
-  const [produto, setProduto] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { produto, carregando } = useProduto(id);
   const { adicionarItem } = useCart();
-
   const [selectedImage, setSelectedImage] = useState(produtoImg);
 
   const handleBuy = () => {
     if (!produto) return;
-    
-    const itemParaCarrinho = {
+    adicionarItem({
       _id: produto._id,
       nome: produto.nome,
-      preco: produto.preco?.promocional || produto.preco?.valor,
-      fornecedor: produto.fornecedor?.nome
-    };
-    adicionarItem(itemParaCarrinho);
+      preco: precoFinal(produto),
+      fornecedor: produto.fornecedor?.nome,
+    });
   };
 
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get(`https://node-vercel-app-rho.vercel.app/api/produtos/${id}`)
-      .then((response) => {
-        const d = response.data;
-        const produtoObj =
-          d && (d.produto || d.data || d) && (d.produto || d.data || d);
-
-        if (!produtoObj || Array.isArray(produtoObj)) {
-          const arr = d.produtos || (Array.isArray(d) ? d : null);
-          if (Array.isArray(arr)) {
-            const found = arr.find((p) => p._id === id || p.id === id);
-            setProduto(found || null);
-            setLoading(false);
-            return;
-          }
-        }
-
-        const finalProduto =
-          produtoObj && !Array.isArray(produtoObj) && (produtoObj._id ? produtoObj : produtoObj.produto || produtoObj);
-
-        setProduto(finalProduto);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-        setProduto(null);
-        setLoading(false);
-      });
-  }, [id]);
-
-  if (loading) {
+  if (carregando) {
     return (
       <Box sx={{ 
         minHeight: '100vh', 
-        width: '100vw',
+        width: '100%',
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center',
@@ -92,7 +56,7 @@ const Produto = () => {
     return (
       <Box sx={{ 
         minHeight: '100vh', 
-        width: '100vw',
+        width: '100%',
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center',
@@ -103,12 +67,10 @@ const Produto = () => {
     );
   }
 
-  const moeda = produto.preco?.moeda || 'BRL';
-  const formatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: moeda });
-  const precoOriginal = produto.preco?.valor ?? null;
-  const precoPromocional = produto.preco?.promocional ?? null;
-  const precoAntigo = precoPromocional ? (precoOriginal ? formatter.format(precoOriginal) : null) : null;
-  const precoFormatado = precoPromocional ? formatter.format(precoPromocional) : (precoOriginal ? formatter.format(precoOriginal) : 'R$ 0,00');
+  const moeda = produto.preco?.moeda;
+  const emPromocao = produto.preco?.promocional != null && produto.preco?.valor != null;
+  const precoAntigo = emPromocao ? formatarPreco(produto.preco.valor, moeda) : null;
+  const precoFormatado = formatarPreco(precoFinal(produto), moeda);
 
   const thumbs = [produtoImg, produtoImg2]; 
   const mainImage = selectedImage || produtoImg;
@@ -117,13 +79,12 @@ const Produto = () => {
   const ratingValue =
     avaliacoes.length > 0
       ? avaliacoes.reduce((sum, r) => sum + (r.nota || 0), 0) / avaliacoes.length
-      : 4.5;
+      : 0;
 
   return (
     <Box sx={{ 
-      bgcolor: '#f4f4f4', 
       minHeight: '100vh', 
-      width: '100vw',
+      width: '100%',
       display: 'flex',
       flexDirection: 'column',
       pt: { xs: 8, md: 10 },
@@ -136,7 +97,7 @@ const Produto = () => {
         </Typography>
 
         <Grid container spacing={4}>
-          <Grid item xs={12} md={7}>
+          <Grid size={{ xs: 12, md: 7 }}>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column', gap: 2 }}>
                 {thumbs.map((img, idx) => (
@@ -144,12 +105,14 @@ const Produto = () => {
                     key={idx}
                     component="img"
                     src={img}
+                    alt={`Foto ${idx + 1} de ${produto.nome}`}
                     onClick={() => setSelectedImage(img)}
                     sx={{
                       width: 60,
                       height: 60,
                       objectFit: 'contain',
-                      border: (mainImage === img) ? `2px solid ${BRAND_COLOR}` : '1px solid #ddd',
+                      border: '2px solid',
+                      borderColor: mainImage === img ? BRAND_COLOR : 'divider',
                       borderRadius: 1,
                       cursor: 'pointer',
                     }}
@@ -184,7 +147,7 @@ const Produto = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={5}>
+          <Grid size={{ xs: 12, md: 5 }}>
             <Typography variant="h5" component="h1" sx={{ fontWeight: 500, mb: 1, display: { xs: 'none', md: 'block' }, color: BRAND_COLOR }}>
               {produto.nome}
             </Typography>
@@ -228,7 +191,7 @@ const Produto = () => {
                 fontWeight: 'bold',
                 fontSize: '1.1rem',
                 mb: 3,
-                '&:hover': { bgcolor: '#235229' },
+                '&:hover': { bgcolor: 'primary.dark' },
               }}
             >
               Comprar
@@ -259,7 +222,7 @@ const Produto = () => {
         <Box sx={{ mt: 8 }}>
           <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: BRAND_COLOR }}>Descrição do produto</Typography>
           <Typography variant="body1" sx={{ color: BRAND_COLOR, lineHeight: 1.8 }}>
-            {produto.descricao || produto.description || 'Sem descrição.'}
+            {produto.descricao || 'Sem descrição.'}
           </Typography>
         </Box>
       </Container>

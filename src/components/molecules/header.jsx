@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppBar, Toolbar, Button, Box, IconButton, Badge } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../molecules/Comprar';
+import { useCart } from '../../context/CartContext';
 
 // Ícones
 import SearchIcon from '@mui/icons-material/Search';
@@ -27,7 +27,7 @@ function NavHeader() {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <img 
               src={logoImg} 
-              alt="Logo"
+              alt="Natural Supplements, voltar para a página inicial"
               onClick={() => navigate('/')} 
               style={{ height: '80px', cursor: 'pointer' }} 
             />
@@ -46,9 +46,9 @@ function NavHeader() {
 
 
           <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <IconButton color="inherit"><SearchIcon /></IconButton>
-            <IconButton color="inherit"><PersonOutlineIcon /></IconButton>
-            <IconButton color="inherit" onClick={() => navigate('/carrinho')}><Badge badgeContent={cartCount} color="error">
+            <IconButton color="inherit" aria-label="Buscar"><SearchIcon /></IconButton>
+            <IconButton color="inherit" aria-label="Minha conta"><PersonOutlineIcon /></IconButton>
+            <IconButton color="inherit" aria-label={`Carrinho, ${cartCount} itens`} onClick={() => navigate('/carrinho')}><Badge badgeContent={cartCount} color="error">
         <ShoppingCartOutlinedIcon /></Badge></IconButton>
           </Box>
 

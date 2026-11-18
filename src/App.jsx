@@ -1,18 +1,15 @@
-import { BrowserRouter, Routes, Route} from 'react-router-dom';
-import Home from './components/pages/Home';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { CartProvider } from './context/CartContext';
 import NavHeader from './components/molecules/header';
+import Home from './components/pages/Home';
 import Contato from './components/pages/Contato';
 import Produto from './components/pages/Produto';
-import { CartProvider } from './components/molecules/Comprar';
 import Carrinho from './components/pages/Carrinho';
 
-
-const App = () => {
-  return (
-    <>
-    <CartProvider>
+const App = () => (
+  <CartProvider>
     <BrowserRouter>
-    <NavHeader /> 
+      <NavHeader />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/Contato" element={<Contato />} />
@@ -20,11 +17,7 @@ const App = () => {
         <Route path="/carrinho" element={<Carrinho />} />
       </Routes>
     </BrowserRouter>
-    </CartProvider>
-    </>
-   
-  );
-}
+  </CartProvider>
+);
 
 export default App;
-          

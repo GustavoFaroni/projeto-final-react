@@ -1,28 +1,23 @@
-import React from 'react';
-import { useCart } from '../molecules/Comprar';
-import { Box, Container, Typography, Button, Paper, IconButton, Divider } from '@mui/material';
+import { useCart } from '../../context/CartContext';
+import { formatarPreco } from '../../utils/preco';
+import { Box, Typography, Button, Paper, IconButton, Divider } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useNavigate } from 'react-router-dom';
 import produtoImg from '../organism/produtoCard.png';
 
-const BRAND_COLOR = '#2e6b36';
+const BRAND_COLOR = 'primary.main';
 
 const Carrinho = () => {
-  const { cartItems, attQuantidade, removerItem } = useCart();
+  const { cartItems, attQuantidade, removerItem, cartTotal: total } = useCart();
   const navigate = useNavigate();
 
-  
-  const total = cartItems.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
-  
-  const formatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
   return (
     <Box sx={{ 
-      bgcolor: '#f4f4f4', 
-      minHeight: '100vh', 
-      width: '100vw',
+            minHeight: '100vh', 
+      width: '100%',
       pt: { xs: 8, md: 10 }, 
       pb: 4,
       display: 'flex',
@@ -59,23 +54,23 @@ const Carrinho = () => {
 
                   <Box sx={{ flexGrow: 1 }}>
                     <Typography variant="subtitle1" fontWeight="bold">{item.nome}</Typography>
-                    <Typography variant="body2" color="text.secondary">{formatter.format(item.preco)}</Typography>
+                    <Typography variant="body2" color="text.secondary">{formatarPreco(item.preco)}</Typography>
                   </Box>
 
 
                   <Box sx={{ display: 'flex', alignItems: 'center', border: '1px solid #ddd', borderRadius: 1 }}>
-                    <IconButton size="small" onClick={() => attQuantidade(item._id, -1)}>
+                    <IconButton size="small" aria-label={`Diminuir quantidade de ${item.nome}`} onClick={() => attQuantidade(item._id, -1)}>
                       <RemoveIcon fontSize="small" />
                     </IconButton>
                     <Typography sx={{ px: 1, minWidth: 30, textAlign: 'center' }}>
                       {item.quantidade}
                     </Typography>
-                    <IconButton size="small" onClick={() => attQuantidade(item._id, 1)}>
+                    <IconButton size="small" aria-label={`Aumentar quantidade de ${item.nome}`} onClick={() => attQuantidade(item._id, 1)}>
                       <AddIcon fontSize="small" />
                     </IconButton>
                   </Box>
 
-                  <IconButton color="error" onClick={() => removerItem(item._id)}>
+                  <IconButton color="error" aria-label={`Remover ${item.nome} do carrinho`} onClick={() => removerItem(item._id)}>
                     <DeleteOutlineIcon />
                   </IconButton>
                 </Paper>
@@ -89,7 +84,7 @@ const Carrinho = () => {
                 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography>Subtotal</Typography>
-                  <Typography>{formatter.format(total)}</Typography>
+                  <Typography>{formatarPreco(total)}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                   <Typography>Frete</Typography>
@@ -100,14 +95,14 @@ const Carrinho = () => {
                 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
                   <Typography variant="h6">Total</Typography>
-                  <Typography variant="h6" color={BRAND_COLOR}>{formatter.format(total)}</Typography>
+                  <Typography variant="h6" color={BRAND_COLOR}>{formatarPreco(total)}</Typography>
                 </Box>
 
                 <Button 
                   variant="contained" 
                   fullWidth 
                   size="large"
-                  sx={{ bgcolor: BRAND_COLOR, '&:hover': { bgcolor: '#235229' } }}
+                  sx={{ bgcolor: BRAND_COLOR, '&:hover': { bgcolor: 'primary.dark' } }}
                   onClick={() => alert("Simulação: Compra finalizada!")}
                 >
                   Finalizar Compra
