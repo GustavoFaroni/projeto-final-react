@@ -29,6 +29,8 @@ const theme = createTheme({
     background: { default: cores.oat, paper: cores.surface },
     text: { primary: cores.ink, secondary: cores.inkMuted },
     divider: cores.line,
+    sage: cores.sage,
+    honeyInk: cores.honeyInk,
   },
   shape: { borderRadius: 10 },
   typography: {

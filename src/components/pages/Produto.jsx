@@ -13,8 +13,8 @@ import {
   CircularProgress
 } from '@mui/material';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
-import produtoImg from '../organism/produtoCard.png';
-import produtoImg2 from '../organism/produtoCard2.png';
+import produtoImg from '../../assets/img/frasco.webp';
+import produtoImg2 from '../../assets/img/frasco-deitado.webp';
 import { useCart } from '../../context/CartContext';
 import { useProduto } from '../../hooks/useProdutos';
 import { formatarPreco, precoFinal } from '../../utils/preco';
@@ -45,7 +45,7 @@ const Produto = () => {
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center',
-        pt: { xs: 8, md: 10 }
+        pt: { xs: 3, md: 4 }
       }}>
         <CircularProgress />
       </Box>
@@ -60,7 +60,7 @@ const Produto = () => {
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center',
-        pt: { xs: 8, md: 10 }
+        pt: { xs: 3, md: 4 }
       }}>
         <Typography sx={{ color: BRAND_COLOR }}>Nenhum produto encontrado.</Typography>
       </Box>
@@ -87,7 +87,7 @@ const Produto = () => {
       width: '100%',
       display: 'flex',
       flexDirection: 'column',
-      pt: { xs: 8, md: 10 },
+      pt: { xs: 3, md: 4 },
       overflow: 'auto',
       color: BRAND_COLOR
     }}>

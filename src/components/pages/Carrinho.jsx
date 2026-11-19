@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useNavigate } from 'react-router-dom';
-import produtoImg from '../organism/produtoCard.png';
+import produtoImg from '../../assets/img/frasco.webp';
 
 const BRAND_COLOR = 'primary.main';
 
@@ -18,7 +18,7 @@ const Carrinho = () => {
     <Box sx={{ 
             minHeight: '100vh', 
       width: '100%',
-      pt: { xs: 8, md: 10 }, 
+      pt: { xs: 3, md: 4 }, 
       pb: 4,
       display: 'flex',
       flexDirection: 'column',

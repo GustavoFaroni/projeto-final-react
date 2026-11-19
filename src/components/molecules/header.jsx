@@ -1,59 +1,71 @@
-import React from 'react';
-import { AppBar, Toolbar, Button, Box, IconButton, Badge } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useCart } from '../../context/CartContext';
-
-// Ícones
-import SearchIcon from '@mui/icons-material/Search';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import { Box, IconButton, Badge, Link } from '@mui/material';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import { useCart } from '../../context/CartContext';
+import Logo from '../atoms/Logo';
 
-
-import logoImg from '../organism/logo.png'; 
+const links = [
+  { rotulo: 'Produtos', para: '/#mais-vendidos' },
+  { rotulo: 'Sobre', para: '/Contato' },
+  { rotulo: 'Contato', para: '/Contato' },
+];
 
 function NavHeader() {
   const { cartCount } = useCart();
   const navigate = useNavigate();
+  const rotuloCarrinho = cartCount === 1 ? 'Carrinho, 1 item' : `Carrinho, ${cartCount} itens`;
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar 
-        position="fixed" 
-        elevation={0} 
-        sx={{ bgcolor: 'white', color: 'text.primary', borderBottom: '1px solid #f0f0f0' }}
+    <Box
+      component="header"
+      sx={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+        bgcolor: 'rgba(255, 255, 255, 0.86)',
+        backdropFilter: 'blur(6px)',
+        borderBottom: 1,
+        borderColor: 'divider',
+      }}
+    >
+      <Box
+        sx={{
+          maxWidth: 1200,
+          mx: 'auto',
+          px: 2,
+          height: 72,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 2,
+        }}
       >
-        <Toolbar>
-          
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <img 
-              src={logoImg} 
-              alt="Natural Supplements, voltar para a página inicial"
-              onClick={() => navigate('/')} 
-              style={{ height: '80px', cursor: 'pointer' }} 
-            />
-          </Box>
+        <Logo />
 
-          <Box sx={{ 
-            flexGrow: 1, 
-            display: { xs: 'flex', md: 'flex' }, 
-            justifyContent: 'center', 
-            gap: 4
-          }}>
-            <Button color="inherit" onClick={() => navigate('/')}>Home</Button>
-            <Button color="inherit" onClick={() => navigate('/Contato')}>Sobre</Button>
-            <Button color="inherit" onClick={() => navigate('/Contato')}>Contato</Button>
-          </Box>
+        <Box component="nav" aria-label="Principal" sx={{ display: { xs: 'none', md: 'flex' }, gap: 4 }}>
+          {links.map((link) => (
+            <Link
+              key={link.rotulo}
+              component={RouterLink}
+              to={link.para}
+              underline="hover"
+              sx={{ color: 'text.primary', fontSize: 15, fontWeight: 500 }}
+            >
+              {link.rotulo}
+            </Link>
+          ))}
+        </Box>
 
-
-          <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <IconButton color="inherit" aria-label="Buscar"><SearchIcon /></IconButton>
-            <IconButton color="inherit" aria-label="Minha conta"><PersonOutlineIcon /></IconButton>
-            <IconButton color="inherit" aria-label={`Carrinho, ${cartCount} itens`} onClick={() => navigate('/carrinho')}><Badge badgeContent={cartCount} color="error">
-        <ShoppingCartOutlinedIcon /></Badge></IconButton>
-          </Box>
-
-        </Toolbar>
-      </AppBar>
+        <IconButton
+          aria-label={rotuloCarrinho}
+          onClick={() => navigate('/carrinho')}
+          sx={{ width: 44, height: 44, color: 'text.primary' }}
+        >
+          <Badge badgeContent={cartCount} color="primary">
+            <ShoppingCartOutlinedIcon />
+          </Badge>
+        </IconButton>
+      </Box>
     </Box>
   );
 }
