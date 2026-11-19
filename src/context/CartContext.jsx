@@ -25,15 +25,15 @@ export const CartProvider = ({ children }) => {
     }
   }, [cartItems]);
 
-  const adicionarItem = (produto) => {
+  const adicionarItem = (produto, quantidade = 1) => {
     setCartItems((itens) => {
       const existe = itens.some((item) => item._id === produto._id);
       if (existe) {
         return itens.map((item) =>
-          item._id === produto._id ? { ...item, quantidade: item.quantidade + 1 } : item
+          item._id === produto._id ? { ...item, quantidade: item.quantidade + quantidade } : item
         );
       }
-      return [...itens, { ...produto, quantidade: 1 }];
+      return [...itens, { ...produto, quantidade }];
     });
   };
 

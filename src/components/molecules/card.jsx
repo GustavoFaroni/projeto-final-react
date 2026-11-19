@@ -2,6 +2,7 @@ import { Box, Button, Card, Link, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { formatarPreco, precoFinal } from '../../utils/preco';
 import { percentualDesconto, resumoAvaliacoes, temPromocao } from '../../utils/produto';
+import SeloDesconto from '../atoms/SeloDesconto';
 import imgProduto from '../../assets/img/frasco.webp';
 
 export default function ProdutoCard({ produto, onAdicionar }) {
@@ -28,12 +29,7 @@ export default function ProdutoCard({ produto, onAdicionar }) {
           sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />
         {promo && (
-          <Box
-            component="span"
-            sx={{ position: 'absolute', top: 12, left: 12, bgcolor: 'secondary.main', color: 'text.primary', fontSize: 12, lineHeight: '16px', fontWeight: 600, borderRadius: '6px', px: 1, py: 0.5 }}
-          >
-            -{percentualDesconto(produto)}%
-          </Box>
+          <SeloDesconto percentual={percentualDesconto(produto)} sx={{ position: 'absolute', top: 12, left: 12 }} />
         )}
       </Box>
 

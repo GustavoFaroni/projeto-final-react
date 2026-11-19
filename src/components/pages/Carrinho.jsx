@@ -1,118 +1,140 @@
+import { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import { Box, Button, Divider, IconButton, Link, Typography } from '@mui/material';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useCart } from '../../context/CartContext';
 import { formatarPreco } from '../../utils/preco';
-import { Box, Typography, Button, Paper, IconButton, Divider } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { useNavigate } from 'react-router-dom';
-import produtoImg from '../../assets/img/frasco.webp';
+import SeletorQuantidade from '../atoms/SeletorQuantidade';
+import imgProduto from '../../assets/img/frasco.webp';
 
-const BRAND_COLOR = 'primary.main';
+const cartao = { bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: '16px' };
+
+function Aviso({ icone, titulo, texto }) {
+  return (
+    <Box sx={{ ...cartao, py: 6, px: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, textAlign: 'center' }}>
+      {icone}
+      <Typography sx={{ fontSize: 18, lineHeight: '28px', fontWeight: 600 }}>{titulo}</Typography>
+      {texto && <Typography color="text.secondary" sx={{ maxWidth: '48ch' }}>{texto}</Typography>}
+      <Button variant="contained" size="large" component={RouterLink} to="/" sx={{ minHeight: 48, px: 3.5 }}>
+        Ver produtos
+      </Button>
+    </Box>
+  );
+}
+
+function LinhaResumo({ rotulo, valor, destaque }) {
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+      <Typography sx={destaque ? { fontSize: 18, fontWeight: 600 } : undefined}>{rotulo}</Typography>
+      {valor}
+    </Box>
+  );
+}
 
 const Carrinho = () => {
-  const { cartItems, attQuantidade, removerItem, cartTotal: total } = useCart();
-  const navigate = useNavigate();
+  const { cartItems, attQuantidade, removerItem, limparCarrinho, cartCount, cartTotal } = useCart();
+  const [pedidoFinalizado, setPedidoFinalizado] = useState(false);
 
+  const finalizar = () => {
+    limparCarrinho();
+    setPedidoFinalizado(true);
+  };
+
+  const iconeGrande = { fontSize: 56, color: 'primary.main' };
 
   return (
-    <Box sx={{ 
-            minHeight: '100vh', 
-      width: '100%',
-      pt: { xs: 3, md: 4 }, 
-      pb: 4,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'flex-start'
-    }}>
-      <Box sx={{ width: '100%', maxWidth: 1200, px: 2 }}>
-        <Typography variant="h4" sx={{ mb: 4, color: BRAND_COLOR, fontWeight: 'bold' }}>
-          Seu Carrinho
-        </Typography>
+    <Box sx={{ maxWidth: 1200, mx: 'auto', px: 2, pt: 4, pb: 8 }}>
+      <Typography variant="h1" sx={{ fontSize: { xs: 30, md: 36 }, lineHeight: 1.2, mb: 3 }}>
+        Seu carrinho
+      </Typography>
 
-        {cartItems.length === 0 ? (
-          <Paper sx={{ p: 4, textAlign: 'center' }}>
-            <Typography variant="h6" color="text.secondary">Seu carrinho está vazio.</Typography>
-            <Button variant="outlined" sx={{ mt: 2, color: BRAND_COLOR, borderColor: BRAND_COLOR }} onClick={() => navigate('/')}>
-              Voltar para a Loja
-            </Button>
-          </Paper>
-        ) : (
-          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
-            
-            <Box sx={{ flex: 2 }}>
-              {cartItems.map((item) => (
-                <Paper key={item._id} sx={{ p: 2, mb: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
-      
-                  <Box 
-                    component="img" 
-                    src={produtoImg} 
-                    alt={item.nome}
-                    sx={{ width: 80, height: 80, objectFit: 'contain', borderRadius: 1, border: '1px solid #eee' }}
-                  />
-                  
-
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography variant="subtitle1" fontWeight="bold">{item.nome}</Typography>
-                    <Typography variant="body2" color="text.secondary">{formatarPreco(item.preco)}</Typography>
-                  </Box>
-
-
-                  <Box sx={{ display: 'flex', alignItems: 'center', border: '1px solid #ddd', borderRadius: 1 }}>
-                    <IconButton size="small" aria-label={`Diminuir quantidade de ${item.nome}`} onClick={() => attQuantidade(item._id, -1)}>
-                      <RemoveIcon fontSize="small" />
-                    </IconButton>
-                    <Typography sx={{ px: 1, minWidth: 30, textAlign: 'center' }}>
-                      {item.quantidade}
-                    </Typography>
-                    <IconButton size="small" aria-label={`Aumentar quantidade de ${item.nome}`} onClick={() => attQuantidade(item._id, 1)}>
-                      <AddIcon fontSize="small" />
-                    </IconButton>
-                  </Box>
-
-                  <IconButton color="error" aria-label={`Remover ${item.nome} do carrinho`} onClick={() => removerItem(item._id)}>
-                    <DeleteOutlineIcon />
-                  </IconButton>
-                </Paper>
-              ))}
-            </Box>
-
-            
-            <Box sx={{ flex: 1 }}>
-              <Paper sx={{ p: 3, position: 'sticky', top: 120 }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>Resumo do Pedido</Typography>
-                
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography>Subtotal</Typography>
-                  <Typography>{formatarPreco(total)}</Typography>
+      {pedidoFinalizado ? (
+        <Aviso
+          icone={<CheckCircleOutlineIcon sx={iconeGrande} />}
+          titulo="Pedido recebido!"
+          texto="Esta é uma loja de demonstração, então nenhum pagamento foi feito. Obrigado por testar."
+        />
+      ) : cartItems.length === 0 ? (
+        <Aviso icone={<ShoppingCartOutlinedIcon sx={iconeGrande} />} titulo="Seu carrinho está vazio." />
+      ) : (
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'flex-start' }}>
+          <Box component="ul" sx={{ flex: '999 1 560px', minWidth: 0, listStyle: 'none', m: 0, p: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {cartItems.map((item) => (
+              <Box
+                component="li"
+                key={item._id}
+                sx={{ ...cartao, p: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}
+              >
+                <Box
+                  component="img"
+                  src={imgProduto}
+                  alt=""
+                  loading="lazy"
+                  sx={{ width: 88, height: 88, flex: '0 0 88px', borderRadius: '10px', objectFit: 'cover', bgcolor: 'sage' }}
+                />
+                <Box sx={{ flex: '1 1 180px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                  <Link
+                    component={RouterLink}
+                    to={`/Produto/${item._id}`}
+                    underline="hover"
+                    sx={{ color: 'text.primary', fontSize: 16, lineHeight: '22px', fontWeight: 600 }}
+                  >
+                    {item.nome}
+                  </Link>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {formatarPreco(item.preco)} cada
+                  </Typography>
                 </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                  <Typography>Frete</Typography>
-                  <Typography color="success.main">Grátis</Typography>
-                </Box>
-                
-                <Divider sx={{ mb: 2 }} />
-                
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-                  <Typography variant="h6">Total</Typography>
-                  <Typography variant="h6" color={BRAND_COLOR}>{formatarPreco(total)}</Typography>
-                </Box>
-
-                <Button 
-                  variant="contained" 
-                  fullWidth 
-                  size="large"
-                  sx={{ bgcolor: BRAND_COLOR, '&:hover': { bgcolor: 'primary.dark' } }}
-                  onClick={() => alert("Simulação: Compra finalizada!")}
+                <SeletorQuantidade
+                  rotulo={`Quantidade de ${item.nome}`}
+                  valor={item.quantidade}
+                  onDiminuir={() => attQuantidade(item._id, -1)}
+                  onAumentar={() => attQuantidade(item._id, 1)}
+                />
+                <Typography sx={{ minWidth: 96, textAlign: 'right', fontSize: 18, lineHeight: '26px', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>
+                  {formatarPreco(item.preco * item.quantidade)}
+                </Typography>
+                <IconButton
+                  aria-label={`Remover ${item.nome} do carrinho`}
+                  onClick={() => removerItem(item._id)}
+                  sx={{ width: 44, height: 44, color: 'text.secondary', '&:hover': { color: 'error.main' } }}
                 >
-                  Finalizar Compra
-                </Button>
-              </Paper>
-            </Box>
-
+                  <DeleteOutlineIcon />
+                </IconButton>
+              </Box>
+            ))}
           </Box>
-        )}
-      </Box>
+
+          <Box
+            component="aside"
+            aria-label="Resumo do pedido"
+            sx={{ ...cartao, flex: '1 1 300px', minWidth: 0, p: 3, display: 'flex', flexDirection: 'column', gap: 2, position: { md: 'sticky' }, top: { md: 96 }, fontVariantNumeric: 'tabular-nums' }}
+          >
+            <Typography variant="h2" sx={{ fontSize: 22, lineHeight: '30px', fontWeight: 600 }}>
+              Resumo do pedido
+            </Typography>
+            <LinhaResumo
+              rotulo={`Subtotal (${cartCount} ${cartCount === 1 ? 'item' : 'itens'})`}
+              valor={<Typography>{formatarPreco(cartTotal)}</Typography>}
+            />
+            <LinhaResumo rotulo="Frete" valor={<Typography sx={{ color: 'primary.main', fontWeight: 600 }}>Grátis</Typography>} />
+            <Divider />
+            <LinhaResumo
+              destaque
+              rotulo="Total"
+              valor={<Typography sx={{ fontSize: 24, lineHeight: '32px', fontWeight: 600, color: 'primary.main' }}>{formatarPreco(cartTotal)}</Typography>}
+            />
+            <Button variant="contained" size="large" onClick={finalizar} sx={{ minHeight: 48, fontSize: 16 }}>
+              Finalizar compra
+            </Button>
+            <Link component={RouterLink} to="/" sx={{ textAlign: 'center', fontSize: 15, fontWeight: 600 }}>
+              Continuar comprando
+            </Link>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };

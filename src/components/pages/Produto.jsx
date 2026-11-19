@@ -1,231 +1,223 @@
-import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  Button,
-  TextField,
-  Rating,
-  Divider,
-  Paper,
-  CircularProgress
-} from '@mui/material';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
-import produtoImg from '../../assets/img/frasco.webp';
-import produtoImg2 from '../../assets/img/frasco-deitado.webp';
-import { useCart } from '../../context/CartContext';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
+import { Alert, Box, Button, CircularProgress, Link, Snackbar, Typography } from '@mui/material';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useProduto } from '../../hooks/useProdutos';
+import { useCart } from '../../context/CartContext';
 import { formatarPreco, precoFinal } from '../../utils/preco';
+import { percentualDesconto, resumoAvaliacoes, temPromocao } from '../../utils/produto';
+import SeletorQuantidade from '../atoms/SeletorQuantidade';
+import SeloDesconto from '../atoms/SeloDesconto';
+import frasco from '../../assets/img/frasco.webp';
+import frascoDeitado from '../../assets/img/frasco-deitado.webp';
 
-const BRAND_COLOR = 'primary.main';
+const fotos = [frasco, frascoDeitado];
+
+const cartao = { bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: '16px' };
+
+const estrelas = (nota) => {
+  const n = Math.min(5, Math.max(0, Math.round(nota)));
+  return '★'.repeat(n) + '☆'.repeat(5 - n);
+};
+
+function Centralizado({ children }) {
+  return <Box sx={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, px: 2 }}>{children}</Box>;
+}
 
 const Produto = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { produto, carregando } = useProduto(id);
   const { adicionarItem } = useCart();
-  const [selectedImage, setSelectedImage] = useState(produtoImg);
-
-  const handleBuy = () => {
-    if (!produto) return;
-    adicionarItem({
-      _id: produto._id,
-      nome: produto.nome,
-      preco: precoFinal(produto),
-      fornecedor: produto.fornecedor?.nome,
-    });
-  };
+  const [fotoAtual, setFotoAtual] = useState(0);
+  const [quantidade, setQuantidade] = useState(1);
+  const [adicionado, setAdicionado] = useState(false);
 
   if (carregando) {
     return (
-      <Box sx={{ 
-        minHeight: '100vh', 
-        width: '100%',
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        pt: { xs: 3, md: 4 }
-      }}>
-        <CircularProgress />
-      </Box>
+      <Centralizado>
+        <CircularProgress aria-label="Carregando produto" />
+      </Centralizado>
     );
   }
 
   if (!produto) {
     return (
-      <Box sx={{ 
-        minHeight: '100vh', 
-        width: '100%',
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        pt: { xs: 3, md: 4 }
-      }}>
-        <Typography sx={{ color: BRAND_COLOR }}>Nenhum produto encontrado.</Typography>
-      </Box>
+      <Centralizado>
+        <Typography variant="h2" component="h1" sx={{ fontSize: 28 }}>Produto não encontrado</Typography>
+        <Button variant="contained" component={RouterLink} to="/">Voltar para a loja</Button>
+      </Centralizado>
     );
   }
 
   const moeda = produto.preco?.moeda;
-  const emPromocao = produto.preco?.promocional != null && produto.preco?.valor != null;
-  const precoAntigo = emPromocao ? formatarPreco(produto.preco.valor, moeda) : null;
-  const precoFormatado = formatarPreco(precoFinal(produto), moeda);
+  const promo = temPromocao(produto);
+  const avaliacoes = resumoAvaliacoes(produto);
+  const estoque = produto.estoque;
+  const esgotado = estoque === 0;
 
-  const thumbs = [produtoImg, produtoImg2]; 
-  const mainImage = selectedImage || produtoImg;
+  const detalhes = [
+    avaliacoes.textoCurto,
+    estoque != null && (esgotado ? 'Esgotado' : `${estoque} em estoque`),
+  ].filter(Boolean).join(' · ');
 
-  const avaliacoes = produto.avaliacao || [];
-  const ratingValue =
-    avaliacoes.length > 0
-      ? avaliacoes.reduce((sum, r) => sum + (r.nota || 0), 0) / avaliacoes.length
-      : 0;
+  const adicionar = () => {
+    adicionarItem(
+      { _id: produto._id, nome: produto.nome, preco: precoFinal(produto), fornecedor: produto.fornecedor?.nome },
+      quantidade
+    );
+    setAdicionado(true);
+    setQuantidade(1);
+  };
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh', 
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      pt: { xs: 3, md: 4 },
-      overflow: 'auto',
-      color: BRAND_COLOR
-    }}>
-      <Container maxWidth="lg" sx={{ bgcolor: 'white', borderRadius: 2, p: 4, boxShadow: 1, my: 4 }}>
-        <Typography variant="h5" component="h1" sx={{ fontWeight: 500, mb: 2, display: { md: 'none' }, color: BRAND_COLOR }}>
-          {produto.nome}
-        </Typography>
+    <Box sx={{ maxWidth: 1200, mx: 'auto', px: 2, pt: 3, pb: 8 }}>
+      <Box component="nav" aria-label="Você está em" sx={{ fontSize: 14, color: 'text.secondary', mb: 3 }}>
+        <Link component={RouterLink} to="/">Início</Link>
+        <Box component="span" aria-hidden="true" sx={{ mx: 1 }}>/</Box>
+        <Link component={RouterLink} to="/#mais-vendidos">Produtos</Link>
+        <Box component="span" aria-hidden="true" sx={{ mx: 1 }}>/</Box>
+        <Box component="span" aria-current="page" sx={{ color: 'text.primary' }}>{produto.nome}</Box>
+      </Box>
 
-        <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 7 }}>
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column', gap: 2 }}>
-                {thumbs.map((img, idx) => (
-                  <Box
-                    key={idx}
-                    component="img"
-                    src={img}
-                    alt={`Foto ${idx + 1} de ${produto.nome}`}
-                    onClick={() => setSelectedImage(img)}
-                    sx={{
-                      width: 60,
-                      height: 60,
-                      objectFit: 'contain',
-                      border: '2px solid',
-                      borderColor: mainImage === img ? BRAND_COLOR : 'divider',
-                      borderRadius: 1,
-                      cursor: 'pointer',
-                    }}
-                  />
-                ))}
-              </Box>
-
-              
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'flex-start' }}>
+        <Box sx={{ flex: '1 1 420px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ position: 'relative', aspectRatio: '1', bgcolor: 'sage', borderRadius: '16px', overflow: 'hidden' }}>
+            <Box
+              component="img"
+              src={fotos[fotoAtual]}
+              alt={`${produto.nome}, foto ${fotoAtual + 1} de ${fotos.length}`}
+              width={800}
+              height={800}
+              sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+            {promo && <SeloDesconto percentual={percentualDesconto(produto)} sx={{ position: 'absolute', top: 16, left: 16 }} />}
+          </Box>
+          <Box role="group" aria-label="Fotos do produto" sx={{ display: 'flex', gap: 1.5 }}>
+            {fotos.map((foto, i) => (
               <Box
+                key={foto}
+                component="button"
+                type="button"
+                aria-label={`Ver foto ${i + 1}`}
+                aria-pressed={i === fotoAtual}
+                onClick={() => setFotoAtual(i)}
                 sx={{
-                  flexGrow: 1,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  minHeight: '400px',
-                  border: '1px solid #eee',
-                  borderRadius: 2,
-                  p: 2,
+                  width: 88,
+                  height: 88,
+                  p: 0,
+                  borderRadius: '6px',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  bgcolor: 'sage',
+                  border: '2px solid',
+                  borderColor: i === fotoAtual ? 'primary.main' : 'transparent',
+                  '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main', outlineOffset: 2 },
                 }}
               >
-                <Box
-                  component="img"
-                  src={mainImage}
-                  alt={produto.nome}
-                  sx={{
-                    maxWidth: '400px',
-                    maxHeight: '400px',
-                    objectFit: 'contain',
-                  }}
-                />
+                <Box component="img" src={foto} alt="" loading="lazy" sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               </Box>
-            </Box>
-          </Grid>
+            ))}
+          </Box>
+        </Box>
 
-          <Grid size={{ xs: 12, md: 5 }}>
-            <Typography variant="h5" component="h1" sx={{ fontWeight: 500, mb: 1, display: { xs: 'none', md: 'block' }, color: BRAND_COLOR }}>
+        <Box sx={{ flex: '1 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Typography variant="h1" sx={{ fontSize: { xs: 30, md: 36 }, lineHeight: 1.2, textWrap: 'balance' }}>
               {produto.nome}
             </Typography>
+            <Typography variant="body2" color="text.secondary">{detalhes}</Typography>
+          </Box>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-              <Rating value={Number(ratingValue.toFixed(1))} precision={0.5} readOnly size="small" />
-              <Typography variant="caption" color="text.secondary">({avaliacoes.length} avaliações)</Typography>
-            </Box>
-
-            <Divider sx={{ mb: 3 }} />
- 
-            <Box sx={{ mb: 3 }}>
-              {precoAntigo && (
-                <Typography variant="body2" sx={{ textDecoration: 'line-through', color: '#999' }}>
-                  {precoAntigo}
+          <Box sx={{ ...cartao, p: 3, display: 'flex', flexDirection: 'column', gap: 1, fontVariantNumeric: 'tabular-nums' }}>
+            {promo && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <SeloDesconto percentual={percentualDesconto(produto)} />
+                <Typography variant="body2" color="text.secondary" sx={{ textDecoration: 'line-through' }}>
+                  {formatarPreco(produto.preco.valor, moeda)}
                 </Typography>
-              )}
-
-              <Typography variant="h3" sx={{ fontWeight: 'bold', color: BRAND_COLOR, letterSpacing: -1 }}>
-                {precoFormatado}
-              </Typography>
-
-              <Typography variant="body2" sx={{ color: BRAND_COLOR }}>
-                no PIX com <strong>5% de desconto</strong>
-              </Typography>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1, color: BRAND_COLOR }}>
-                <CreditCardIcon fontSize="small" />
-                <Typography variant="caption">ou até 12x sem juros no cartão</Typography>
               </Box>
-            </Box>
+            )}
+            <Typography sx={{ fontSize: 32, lineHeight: '40px', fontWeight: 600, color: promo ? 'honeyInk' : 'primary.main' }}>
+              {formatarPreco(precoFinal(produto), moeda)}
+            </Typography>
+            {promo && (
+              <Typography variant="body2" sx={{ color: 'honeyInk', fontWeight: 500 }}>
+                Você economiza {formatarPreco(produto.preco.valor - produto.preco.promocional, moeda)}
+              </Typography>
+            )}
+          </Box>
 
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}>
+            <SeletorQuantidade
+              valor={quantidade}
+              max={estoque ?? undefined}
+              onDiminuir={() => setQuantidade((q) => Math.max(1, q - 1))}
+              onAumentar={() => setQuantidade((q) => q + 1)}
+            />
             <Button
               variant="contained"
-              fullWidth
               size="large"
-              onClick={handleBuy}
-              sx={{
-                bgcolor: BRAND_COLOR,
-                height: '50px',
-                fontWeight: 'bold',
-                fontSize: '1.1rem',
-                mb: 3,
-                '&:hover': { bgcolor: 'primary.dark' },
-              }}
+              disabled={esgotado}
+              onClick={adicionar}
+              sx={{ flex: '1 1 220px', minHeight: 48, fontSize: 16 }}
             >
-              Comprar
+              {esgotado ? 'Esgotado' : 'Adicionar ao carrinho'}
             </Button>
+          </Box>
 
-            <Paper variant="outlined" sx={{ p: 2, mb: 3, bgcolor: '#f9f9f9', border: 'none' }}>
-              <Typography variant="body2" sx={{ color: BRAND_COLOR }}>
-                Vendido por <strong>{produto.fornecedor?.nome || 'Fornecedor'}</strong>
-                <br />
-                Entregue por <strong>Natural Supplements</strong>
-              </Typography>
-            </Paper>
-
-            <Box>
-              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: BRAND_COLOR }}>
-                Calcule o frete e prazo de entrega
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <TextField size="small" placeholder="_______-___" sx={{ flexGrow: 1, bgcolor: 'white' }} />
-                <Button variant="outlined" sx={{ textTransform: 'none', borderColor: BRAND_COLOR, color: BRAND_COLOR }}>
-                  Consultar
-                </Button>
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
-
-        <Box sx={{ mt: 8 }}>
-          <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: BRAND_COLOR }}>Descrição do produto</Typography>
-          <Typography variant="body1" sx={{ color: BRAND_COLOR, lineHeight: 1.8 }}>
-            {produto.descricao || 'Sem descrição.'}
+          <Typography variant="body2" color="text.secondary">
+            Vendido por{' '}
+            <Box component="strong" sx={{ color: 'text.primary', fontWeight: 600 }}>{produto.fornecedor?.nome ?? 'Natural Supplements'}</Box>
+            {' '}e entregue por{' '}
+            <Box component="strong" sx={{ color: 'text.primary', fontWeight: 600 }}>Natural Supplements</Box>
           </Typography>
         </Box>
-      </Container>
+      </Box>
+
+      <Box component="section" sx={{ mt: 8, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        <Box sx={{ flex: '1 1 420px', minWidth: 0 }}>
+          <Typography variant="h2" sx={{ fontSize: 28, lineHeight: '36px', mb: 2 }}>Descrição</Typography>
+          <Typography sx={{ maxWidth: '65ch' }}>{produto.descricao || 'Este produto ainda não tem descrição.'}</Typography>
+        </Box>
+        <Box sx={{ flex: '1 1 380px', minWidth: 0 }}>
+          <Typography variant="h2" sx={{ fontSize: 28, lineHeight: '36px', mb: 2 }}>Avaliações</Typography>
+          {avaliacoes.total === 0 ? (
+            <Typography color="text.secondary">Ninguém avaliou este produto ainda.</Typography>
+          ) : (
+            <Box component="ul" sx={{ listStyle: 'none', m: 0, p: 0, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              {produto.avaliacao.map((av, i) => (
+                <Box component="li" key={av._id ?? i} sx={{ ...cartao, p: 2 }}>
+                  <Typography component="span" aria-label={`Nota ${av.nota} de 5`} sx={{ color: 'primary.main' }}>
+                    {estrelas(av.nota)}
+                  </Typography>
+                  {av.comentario && <Typography sx={{ mt: 0.5, fontSize: 15 }}>{av.comentario}</Typography>}
+                </Box>
+              ))}
+            </Box>
+          )}
+        </Box>
+      </Box>
+
+      <Snackbar
+        open={adicionado}
+        autoHideDuration={4000}
+        onClose={() => setAdicionado(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          icon={<CheckCircleOutlineIcon />}
+          severity="success"
+          variant="filled"
+          action={
+            <Button color="inherit" size="small" onClick={() => navigate('/carrinho')}>
+              Ver carrinho
+            </Button>
+          }
+        >
+          Adicionado ao carrinho
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

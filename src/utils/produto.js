@@ -10,10 +10,15 @@ export function percentualDesconto(produto) {
 
 export function resumoAvaliacoes(produto) {
   const notas = (produto?.avaliacao ?? []).map((a) => a.nota).filter((n) => typeof n === 'number');
-  if (notas.length === 0) return { media: 0, total: 0, texto: 'Sem avaliações ainda' };
+  if (notas.length === 0) return { media: 0, total: 0, texto: 'Sem avaliações ainda', textoCurto: 'Sem avaliações ainda' };
 
   const media = notas.reduce((soma, n) => soma + n, 0) / notas.length;
   const mediaTexto = media.toFixed(1).replace('.', ',');
   const rotulo = notas.length === 1 ? 'avaliação' : 'avaliações';
-  return { media, total: notas.length, texto: `★ ${mediaTexto} (${notas.length} ${rotulo})` };
+  return {
+    media,
+    total: notas.length,
+    texto: `★ ${mediaTexto} (${notas.length} ${rotulo})`,
+    textoCurto: `★ ${mediaTexto} · ${notas.length} ${rotulo}`,
+  };
 }
