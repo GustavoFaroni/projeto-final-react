@@ -7,7 +7,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useCart } from '../../context/CartContext';
 import { formatarPreco } from '../../utils/preco';
 import SeletorQuantidade from '../atoms/SeletorQuantidade';
-import imgProduto from '../../assets/img/frasco.webp';
+import { imagemDoProduto, usarImagemPadraoSeFalhar } from '../../utils/imagem';
 
 const cartao = { bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: '16px' };
 
@@ -69,7 +69,8 @@ const Carrinho = () => {
               >
                 <Box
                   component="img"
-                  src={imgProduto}
+                  src={imagemDoProduto(item)}
+                  onError={usarImagemPadraoSeFalhar}
                   alt=""
                   loading="lazy"
                   sx={{ width: 88, height: 88, flex: '0 0 88px', borderRadius: '10px', objectFit: 'cover', bgcolor: 'sage' }}

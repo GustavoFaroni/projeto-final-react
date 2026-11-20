@@ -26,6 +26,7 @@ const Home = () => {
       nome: produto.nome,
       preco: precoFinal(produto),
       fornecedor: produto.fornecedor?.nome,
+      imagem: produto.imagem,
     });
     setAviso(`${produto.nome} foi adicionado ao carrinho`);
   };

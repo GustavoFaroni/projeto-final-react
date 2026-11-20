@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { formatarPreco, precoFinal } from '../../utils/preco';
 import { percentualDesconto, resumoAvaliacoes, temPromocao } from '../../utils/produto';
 import SeloDesconto from '../atoms/SeloDesconto';
-import imgProduto from '../../assets/img/frasco.webp';
+import { imagemDoProduto, usarImagemPadraoSeFalhar } from '../../utils/imagem';
 
 export default function ProdutoCard({ produto, onAdicionar }) {
   const caminho = `/Produto/${produto._id}`;
@@ -21,7 +21,8 @@ export default function ProdutoCard({ produto, onAdicionar }) {
       >
         <Box
           component="img"
-          src={imgProduto}
+          src={imagemDoProduto(produto)}
+          onError={usarImagemPadraoSeFalhar}
           alt=""
           loading="lazy"
           width={800}

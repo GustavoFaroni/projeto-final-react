@@ -8,10 +8,7 @@ import { formatarPreco, precoFinal } from '../../utils/preco';
 import { percentualDesconto, resumoAvaliacoes, temPromocao } from '../../utils/produto';
 import SeletorQuantidade from '../atoms/SeletorQuantidade';
 import SeloDesconto from '../atoms/SeloDesconto';
-import frasco from '../../assets/img/frasco.webp';
-import frascoDeitado from '../../assets/img/frasco-deitado.webp';
-
-const fotos = [frasco, frascoDeitado];
+import { imagemDoProduto, usarImagemPadraoSeFalhar } from '../../utils/imagem';
 
 const cartao = { bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: '16px' };
 
@@ -50,6 +47,7 @@ const Produto = () => {
     );
   }
 
+  const fotos = [imagemDoProduto(produto)];
   const moeda = produto.preco?.moeda;
   const promo = temPromocao(produto);
   const avaliacoes = resumoAvaliacoes(produto);
@@ -63,7 +61,7 @@ const Produto = () => {
 
   const adicionar = () => {
     adicionarItem(
-      { _id: produto._id, nome: produto.nome, preco: precoFinal(produto), fornecedor: produto.fornecedor?.nome },
+      { _id: produto._id, nome: produto.nome, preco: precoFinal(produto), fornecedor: produto.fornecedor?.nome, imagem: produto.imagem },
       quantidade
     );
     setAdicionado(true);
@@ -85,14 +83,16 @@ const Produto = () => {
           <Box sx={{ position: 'relative', aspectRatio: '1', bgcolor: 'sage', borderRadius: '16px', overflow: 'hidden' }}>
             <Box
               component="img"
-              src={fotos[fotoAtual]}
-              alt={`${produto.nome}, foto ${fotoAtual + 1} de ${fotos.length}`}
+              src={fotos[fotoAtual] ?? fotos[0]}
+              onError={usarImagemPadraoSeFalhar}
+              alt={fotos.length > 1 ? `${produto.nome}, foto ${fotoAtual + 1} de ${fotos.length}` : produto.nome}
               width={800}
               height={800}
               sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
             {promo && <SeloDesconto percentual={percentualDesconto(produto)} sx={{ position: 'absolute', top: 16, left: 16 }} />}
           </Box>
+          {fotos.length > 1 && (
           <Box role="group" aria-label="Fotos do produto" sx={{ display: 'flex', gap: 1.5 }}>
             {fotos.map((foto, i) => (
               <Box
@@ -115,10 +115,11 @@ const Produto = () => {
                   '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main', outlineOffset: 2 },
                 }}
               >
-                <Box component="img" src={foto} alt="" loading="lazy" sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <Box component="img" src={foto} alt="" loading="lazy" onError={usarImagemPadraoSeFalhar} sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               </Box>
             ))}
           </Box>
+          )}
         </Box>
 
         <Box sx={{ flex: '1 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
