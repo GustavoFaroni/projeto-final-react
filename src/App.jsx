@@ -7,6 +7,8 @@ import NavHeader from './components/molecules/header';
 import Footer from './components/molecules/Footer';
 import Home from './components/pages/Home';
 import Contato from './components/pages/Contato';
+import Sobre from './components/pages/Sobre';
+import NaoEncontrada from './components/pages/NaoEncontrada';
 import Produto from './components/pages/Produto';
 import Carrinho from './components/pages/Carrinho';
 
@@ -20,9 +22,11 @@ const App = () => (
         <Box component="main" sx={{ flex: 1 }}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/Contato" element={<Contato />} />
+            <Route path="/sobre" element={<Sobre />} />
+            <Route path="/contato" element={<Contato />} />
             <Route path="/Produto/:id" element={<Produto />} />
             <Route path="/carrinho" element={<Carrinho />} />
+            <Route path="*" element={<NaoEncontrada />} />
           </Routes>
         </Box>
         <Footer />

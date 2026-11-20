@@ -61,7 +61,7 @@ const Home = () => {
             <Button variant="contained" size="large" href="#mais-vendidos" sx={{ minHeight: 48, px: 3.5, fontSize: 16 }}>
               Ver produtos
             </Button>
-            <Link component={RouterLink} to="/Contato" fontWeight={600} fontSize={16}>
+            <Link component={RouterLink} to="/sobre" fontWeight={600} fontSize={16}>
               Conheça a loja
             </Link>
           </Box>

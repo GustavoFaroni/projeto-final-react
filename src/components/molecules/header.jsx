@@ -1,13 +1,13 @@
 import { Box, IconButton, Badge, Link } from '@mui/material';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { useCart } from '../../context/CartContext';
 import Logo from '../atoms/Logo';
 
 const links = [
   { rotulo: 'Produtos', para: '/#mais-vendidos' },
-  { rotulo: 'Sobre', para: '/Contato' },
-  { rotulo: 'Contato', para: '/Contato' },
+  { rotulo: 'Sobre', para: '/sobre' },
+  { rotulo: 'Contato', para: '/contato' },
 ];
 
 function NavHeader() {
@@ -46,10 +46,16 @@ function NavHeader() {
           {links.map((link) => (
             <Link
               key={link.rotulo}
-              component={RouterLink}
+              component={NavLink}
               to={link.para}
+              end
               underline="hover"
-              sx={{ color: 'text.primary', fontSize: 15, fontWeight: 500 }}
+              sx={{
+                color: 'text.primary',
+                fontSize: 15,
+                fontWeight: 500,
+                '&[aria-current="page"]': { color: 'primary.main', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: '6px' },
+              }}
             >
               {link.rotulo}
             </Link>
