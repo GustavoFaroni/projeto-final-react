@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { Alert, Box, Button, CircularProgress, Link, Snackbar, Typography } from '@mui/material';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Link from '@mui/material/Link';
+import Snackbar from '@mui/material/Snackbar';
+import Typography from '@mui/material/Typography';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ProdutoCard from '../molecules/card';
 import { useProdutos } from '../../hooks/useProdutos';
@@ -8,6 +14,7 @@ import { useCart } from '../../context/CartContext';
 import { precoFinal } from '../../utils/preco';
 import { useTituloPagina } from '../../hooks/useTituloPagina';
 import heroImg from '../../assets/img/hero.webp';
+import { preCarregarPaginas } from '../../rotas';
 
 const Home = () => {
   const { produtos, carregando, erro } = useProdutos();
@@ -15,6 +22,11 @@ const Home = () => {
   const { hash } = useLocation();
   const [aviso, setAviso] = useState('');
   useTituloPagina();
+
+  // Com a Home pronta, baixa em segundo plano as páginas de Produto e Carrinho.
+  useEffect(() => {
+    preCarregarPaginas();
+  }, []);
 
   useEffect(() => {
     if (hash && !carregando) {

@@ -1,4 +1,7 @@
-import { Box, IconButton, Badge, Link } from '@mui/material';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Badge from '@mui/material/Badge';
+import Link from '@mui/material/Link';
 import { NavLink, useNavigate } from 'react-router-dom';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { useCart } from '../../context/CartContext';

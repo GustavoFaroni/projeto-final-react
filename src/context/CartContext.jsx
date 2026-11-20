@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 const CHAVE_STORAGE = 'natural-supplements:carrinho:v1';
 
@@ -25,7 +25,7 @@ export const CartProvider = ({ children }) => {
     }
   }, [cartItems]);
 
-  const adicionarItem = (produto, quantidade = 1) => {
+  const adicionarItem = useCallback((produto, quantidade = 1) => {
     setCartItems((itens) => {
       const existe = itens.some((item) => item._id === produto._id);
       if (existe) {
@@ -35,31 +35,31 @@ export const CartProvider = ({ children }) => {
       }
       return [...itens, { ...produto, quantidade }];
     });
-  };
+  }, []);
 
-  const removerItem = (produtoId) => {
+  const removerItem = useCallback((produtoId) => {
     setCartItems((itens) => itens.filter((item) => item._id !== produtoId));
-  };
+  }, []);
 
-  const attQuantidade = (produtoId, delta) => {
+  const attQuantidade = useCallback((produtoId, delta) => {
     setCartItems((itens) =>
       itens.map((item) =>
         item._id === produtoId ? { ...item, quantidade: Math.max(1, item.quantidade + delta) } : item
       )
     );
-  };
+  }, []);
 
   // Devolve um item removido para a mesma posição (usado pelo "Desfazer").
-  const restaurarItem = (item, posicao) => {
+  const restaurarItem = useCallback((item, posicao) => {
     setCartItems((itens) => {
       if (itens.some((i) => i._id === item._id)) return itens;
       const copia = [...itens];
       copia.splice(Math.min(posicao, copia.length), 0, item);
       return copia;
     });
-  };
+  }, []);
 
-  const limparCarrinho = () => setCartItems([]);
+  const limparCarrinho = useCallback(() => setCartItems([]), []);
 
   const { cartCount, cartTotal } = useMemo(
     () =>
@@ -73,10 +73,14 @@ export const CartProvider = ({ children }) => {
     [cartItems]
   );
 
+  // Só cria um objeto novo quando o carrinho muda: evita renderizar de novo quem usa o contexto à toa.
+  const valor = useMemo(
+    () => ({ cartItems, adicionarItem, removerItem, restaurarItem, attQuantidade, limparCarrinho, cartCount, cartTotal }),
+    [cartItems, adicionarItem, removerItem, restaurarItem, attQuantidade, limparCarrinho, cartCount, cartTotal]
+  );
+
   return (
-    <CartContext.Provider
-      value={{ cartItems, adicionarItem, removerItem, restaurarItem, attQuantidade, limparCarrinho, cartCount, cartTotal }}
-    >
+    <CartContext.Provider value={valor}>
       {children}
     </CartContext.Provider>
   );

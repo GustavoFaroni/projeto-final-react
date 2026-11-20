@@ -1,5 +1,7 @@
 import { Link as RouterLink } from 'react-router-dom';
-import { Box, Button, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import { useTituloPagina } from '../../hooks/useTituloPagina';
 
 const NaoEncontrada = () => {

@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
-import { Alert, Box, Button, CircularProgress, Link, Snackbar, Typography } from '@mui/material';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Link from '@mui/material/Link';
+import Snackbar from '@mui/material/Snackbar';
+import Typography from '@mui/material/Typography';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useProduto } from '../../hooks/useProdutos';
 import { useCart } from '../../context/CartContext';

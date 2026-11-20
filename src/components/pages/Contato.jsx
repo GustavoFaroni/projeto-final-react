@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Alert, Box, Button, Link, MenuItem, TextField, Typography } from '@mui/material';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
@@ -10,13 +16,15 @@ const cartao = { bgcolor: 'background.paper', border: 1, borderColor: 'divider',
 
 const assuntos = ['Dúvida sobre um produto', 'Meu pedido', 'Sugestão', 'Outro assunto'];
 
+const FORMATO_EMAIL = /^\S+@\S+\.\S+$/;
+
 const vazio = { nome: '', email: '', assunto: assuntos[0], mensagem: '' };
 
 function validar(campos) {
   const erros = {};
   if (!campos.nome.trim()) erros.nome = 'Informe seu nome.';
   if (!campos.email.trim()) erros.email = 'Informe seu e-mail.';
-  else if (!/^\S+@\S+\.\S+$/.test(campos.email)) erros.email = 'Confira o e-mail: ele precisa ter o formato nome@exemplo.com.';
+  else if (!FORMATO_EMAIL.test(campos.email)) erros.email = 'Confira o e-mail: ele precisa ter o formato nome@exemplo.com.';
   if (campos.mensagem.trim().length < 10) erros.mensagem = 'Escreva uma mensagem com pelo menos 10 caracteres.';
   return erros;
 }

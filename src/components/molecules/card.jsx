@@ -1,4 +1,8 @@
-import { Box, Button, Card, Link, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 import { Link as RouterLink } from 'react-router-dom';
 import { formatarPreco, precoFinal } from '../../utils/preco';
 import { percentualDesconto, resumoAvaliacoes, temPromocao } from '../../utils/produto';
