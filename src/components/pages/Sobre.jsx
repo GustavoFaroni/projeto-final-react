@@ -5,6 +5,7 @@ import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import { useTituloPagina } from '../../hooks/useTituloPagina';
 
 const cartao = { bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: '16px' };
 
@@ -34,7 +35,10 @@ const links = [
   { rotulo: 'LinkedIn', href: 'https://www.linkedin.com/in/gustavo-faroni-bentevengo', icone: <LinkedInIcon /> },
 ];
 
-const Sobre = () => (
+const Sobre = () => {
+  useTituloPagina('Sobre');
+
+  return (
   <Box sx={{ maxWidth: 1200, mx: 'auto', px: 2, pt: { xs: 4, md: 6 }, pb: 8, display: 'flex', flexDirection: 'column', gap: { xs: 6, md: 8 } }}>
     <Box component="section" sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 6 }}>
       <Box sx={{ flex: '1 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -124,6 +128,7 @@ const Sobre = () => (
       </Box>
     </Box>
   </Box>
-);
+  );
+};
 
 export default Sobre;

@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Box, Button, Divider, IconButton, Link, Typography } from '@mui/material';
+import { Alert, Box, Button, Divider, IconButton, Link, Snackbar, Typography } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useCart } from '../../context/CartContext';
 import { formatarPreco } from '../../utils/preco';
 import SeletorQuantidade from '../atoms/SeletorQuantidade';
+import { useTituloPagina } from '../../hooks/useTituloPagina';
 import { imagemDoProduto, usarImagemPadraoSeFalhar } from '../../utils/imagem';
 
 const cartao = { bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: '16px' };
@@ -34,8 +35,20 @@ function LinhaResumo({ rotulo, valor, destaque }) {
 }
 
 const Carrinho = () => {
-  const { cartItems, attQuantidade, removerItem, limparCarrinho, cartCount, cartTotal } = useCart();
+  const { cartItems, attQuantidade, removerItem, restaurarItem, limparCarrinho, cartCount, cartTotal } = useCart();
   const [pedidoFinalizado, setPedidoFinalizado] = useState(false);
+  const [removido, setRemovido] = useState(null);
+  useTituloPagina('Carrinho');
+
+  const remover = (item) => {
+    setRemovido({ item, posicao: cartItems.indexOf(item) });
+    removerItem(item._id);
+  };
+
+  const desfazer = () => {
+    if (removido) restaurarItem(removido.item, removido.posicao);
+    setRemovido(null);
+  };
 
   const finalizar = () => {
     limparCarrinho();
@@ -73,6 +86,8 @@ const Carrinho = () => {
                   onError={usarImagemPadraoSeFalhar}
                   alt=""
                   loading="lazy"
+                  width={88}
+                  height={88}
                   sx={{ width: 88, height: 88, flex: '0 0 88px', borderRadius: '10px', objectFit: 'cover', bgcolor: 'sage' }}
                 />
                 <Box sx={{ flex: '1 1 180px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
@@ -99,7 +114,7 @@ const Carrinho = () => {
                 </Typography>
                 <IconButton
                   aria-label={`Remover ${item.nome} do carrinho`}
-                  onClick={() => removerItem(item._id)}
+                  onClick={() => remover(item)}
                   sx={{ width: 44, height: 44, color: 'text.secondary', '&:hover': { color: 'error.main' } }}
                 >
                   <DeleteOutlineIcon />
@@ -136,6 +151,26 @@ const Carrinho = () => {
           </Box>
         </Box>
       )}
+
+      <Snackbar
+        open={Boolean(removido)}
+        autoHideDuration={6000}
+        onClose={(_, motivo) => motivo !== 'clickaway' && setRemovido(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          severity="info"
+          variant="filled"
+          sx={{ bgcolor: 'text.primary', color: 'background.paper' }}
+          action={
+            <Button color="inherit" size="small" onClick={desfazer} sx={{ fontWeight: 700 }}>
+              Desfazer
+            </Button>
+          }
+        >
+          {removido?.item.nome} foi removido do carrinho.
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

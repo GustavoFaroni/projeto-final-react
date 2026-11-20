@@ -7,6 +7,7 @@ import { useCart } from '../../context/CartContext';
 import { formatarPreco, precoFinal } from '../../utils/preco';
 import { percentualDesconto, resumoAvaliacoes, temPromocao } from '../../utils/produto';
 import SeletorQuantidade from '../atoms/SeletorQuantidade';
+import { useTituloPagina } from '../../hooks/useTituloPagina';
 import SeloDesconto from '../atoms/SeloDesconto';
 import { imagemDoProduto, usarImagemPadraoSeFalhar } from '../../utils/imagem';
 
@@ -29,6 +30,7 @@ const Produto = () => {
   const [fotoAtual, setFotoAtual] = useState(0);
   const [quantidade, setQuantidade] = useState(1);
   const [adicionado, setAdicionado] = useState(false);
+  useTituloPagina(produto?.nome ?? (carregando ? 'Carregando…' : 'Produto não encontrado'));
 
   if (carregando) {
     return (
@@ -88,6 +90,7 @@ const Produto = () => {
               alt={fotos.length > 1 ? `${produto.nome}, foto ${fotoAtual + 1} de ${fotos.length}` : produto.nome}
               width={800}
               height={800}
+              fetchPriority="high"
               sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
             {promo && <SeloDesconto percentual={percentualDesconto(produto)} sx={{ position: 'absolute', top: 16, left: 16 }} />}

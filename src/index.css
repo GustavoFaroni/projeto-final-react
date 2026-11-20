@@ -1,9 +1,29 @@
+html {
+  /* o cabeçalho fixo tem 72px: evita que ele cubra o elemento focado ou a âncora */
+  scroll-padding-top: 88px;
+}
+
 body {
   min-width: 320px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+a,
+button {
+  touch-action: manipulation;
+}
+
 a {
   color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -4,6 +4,7 @@ import { Alert, Box, Button, Link, MenuItem, TextField, Typography } from '@mui/
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import { useTituloPagina } from '../../hooks/useTituloPagina';
 
 const cartao = { bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: '16px' };
 
@@ -25,6 +26,7 @@ const Contato = () => {
   const [erros, setErros] = useState({});
   const [tocados, setTocados] = useState({});
   const [enviado, setEnviado] = useState(false);
+  useTituloPagina('Contato');
 
   const alterar = (evento) => {
     const { name, value } = evento.target;
@@ -135,6 +137,7 @@ const Contato = () => {
               type="email"
               autoComplete="email"
               inputMode="email"
+              slotProps={{ htmlInput: { spellCheck: false } }}
               required
               value={campos.email}
               onChange={alterar}

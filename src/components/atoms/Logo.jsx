@@ -15,6 +15,7 @@ export default function Logo() {
       </svg>
       <Box
         component="span"
+        translate="no"
         sx={{ fontFamily: '"Lora", Georgia, serif', fontWeight: 600, fontSize: { xs: 18, sm: 20 }, lineHeight: '28px' }}
       >
         Natural Supplements

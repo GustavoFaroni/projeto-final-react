@@ -20,7 +20,7 @@ export default function Footer() {
           color: 'text.secondary',
         }}
       >
-        <Typography sx={{ fontFamily: '"Lora", Georgia, serif', fontWeight: 600, fontSize: 18, color: 'primary.main' }}>
+        <Typography translate="no" sx={{ fontFamily: '"Lora", Georgia, serif', fontWeight: 600, fontSize: 18, color: 'primary.main' }}>
           Natural Supplements
         </Typography>
         <Typography variant="body2">Projeto de portfólio de Gustavo Faroni · React e Node.js</Typography>

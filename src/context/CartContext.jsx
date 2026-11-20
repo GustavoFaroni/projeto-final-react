@@ -49,6 +49,16 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  // Devolve um item removido para a mesma posição (usado pelo "Desfazer").
+  const restaurarItem = (item, posicao) => {
+    setCartItems((itens) => {
+      if (itens.some((i) => i._id === item._id)) return itens;
+      const copia = [...itens];
+      copia.splice(Math.min(posicao, copia.length), 0, item);
+      return copia;
+    });
+  };
+
   const limparCarrinho = () => setCartItems([]);
 
   const { cartCount, cartTotal } = useMemo(
@@ -65,7 +75,7 @@ export const CartProvider = ({ children }) => {
 
   return (
     <CartContext.Provider
-      value={{ cartItems, adicionarItem, removerItem, attQuantidade, limparCarrinho, cartCount, cartTotal }}
+      value={{ cartItems, adicionarItem, removerItem, restaurarItem, attQuantidade, limparCarrinho, cartCount, cartTotal }}
     >
       {children}
     </CartContext.Provider>

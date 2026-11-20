@@ -6,6 +6,7 @@ import ProdutoCard from '../molecules/card';
 import { useProdutos } from '../../hooks/useProdutos';
 import { useCart } from '../../context/CartContext';
 import { precoFinal } from '../../utils/preco';
+import { useTituloPagina } from '../../hooks/useTituloPagina';
 import heroImg from '../../assets/img/hero.webp';
 
 const Home = () => {
@@ -13,10 +14,13 @@ const Home = () => {
   const { adicionarItem } = useCart();
   const { hash } = useLocation();
   const [aviso, setAviso] = useState('');
+  useTituloPagina();
 
   useEffect(() => {
     if (hash && !carregando) {
-      document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById(hash.slice(1))?.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      });
     }
   }, [hash, carregando]);
 

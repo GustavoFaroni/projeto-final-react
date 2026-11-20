@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import { CartProvider } from './context/CartContext';
 import FundoFolhas from './components/atoms/FundoFolhas';
 import RolarParaTopo from './components/atoms/RolarParaTopo';
+import PularParaConteudo from './components/atoms/PularParaConteudo';
 import NavHeader from './components/molecules/header';
 import Footer from './components/molecules/Footer';
 import Home from './components/pages/Home';
@@ -18,8 +19,9 @@ const App = () => (
       <RolarParaTopo />
       <FundoFolhas />
       <Box sx={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <PularParaConteudo />
         <NavHeader />
-        <Box component="main" sx={{ flex: 1 }}>
+        <Box component="main" id="conteudo" tabIndex={-1} sx={{ flex: 1, outline: 'none' }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/sobre" element={<Sobre />} />
