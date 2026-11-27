@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AnimatePresence, m } from 'motion/react';
 import { Link as RouterLink } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -16,6 +17,8 @@ import { formatarPreco } from '../../utils/preco';
 import SeletorQuantidade from '../atoms/SeletorQuantidade';
 import { useTituloPagina } from '../../hooks/useTituloPagina';
 import { imagemDoProduto, usarImagemPadraoSeFalhar } from '../../utils/imagem';
+
+const MotionLi = m.create('li');
 
 const cartao = { bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: '16px' };
 
@@ -81,10 +84,19 @@ const Carrinho = () => {
       ) : (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'flex-start' }}>
           <Box component="ul" sx={{ flex: '999 1 560px', minWidth: 0, listStyle: 'none', m: 0, p: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <AnimatePresence initial={false}>
             {cartItems.map((item) => (
-              <Box
-                component="li"
+              // layout: quando um item sai, os de baixo sobem deslizando em vez de pular
+              <MotionLi
                 key={item._id}
+                layout
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: -24, transition: { duration: 0.2 } }}
+                transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+                style={{ listStyle: 'none' }}
+              >
+              <Box
                 sx={{ ...cartao, p: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}
               >
                 <Box
@@ -127,7 +139,9 @@ const Carrinho = () => {
                   <DeleteOutlineIcon />
                 </IconButton>
               </Box>
+              </MotionLi>
             ))}
+            </AnimatePresence>
           </Box>
 
           <Box

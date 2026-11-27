@@ -4,7 +4,9 @@ import Badge from '@mui/material/Badge';
 import Link from '@mui/material/Link';
 import { NavLink, useNavigate } from 'react-router-dom';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import { m } from 'motion/react';
 import { useCart } from '../../context/CartContext';
+import { useVooCarrinho } from '../../context/VooCarrinhoContext';
 import Logo from '../atoms/Logo';
 
 const links = [
@@ -15,6 +17,7 @@ const links = [
 
 function NavHeader() {
   const { cartCount } = useCart();
+  const { pulso } = useVooCarrinho();
   const navigate = useNavigate();
   const rotuloCarrinho = cartCount === 1 ? 'Carrinho, 1 item' : `Carrinho, ${cartCount} itens`;
 
@@ -66,13 +69,23 @@ function NavHeader() {
         </Box>
 
         <IconButton
+          id="botao-carrinho"
           aria-label={rotuloCarrinho}
           onClick={() => navigate('/carrinho')}
           sx={{ width: 44, height: 44, color: 'text.primary' }}
         >
-          <Badge badgeContent={cartCount} color="primary">
-            <ShoppingCartOutlinedIcon />
-          </Badge>
+          {/* key={pulso}: cada produto que chega reinicia a animação de "pulo" */}
+          <m.span
+            key={pulso}
+            initial={pulso ? { scale: 1 } : false}
+            animate={pulso ? { scale: [1, 1.28, 0.94, 1], rotate: [0, -8, 4, 0] } : undefined}
+            transition={{ duration: 0.45, ease: 'easeOut' }}
+            style={{ display: 'inline-flex' }}
+          >
+            <Badge badgeContent={cartCount} color="primary">
+              <ShoppingCartOutlinedIcon />
+            </Badge>
+          </m.span>
         </IconButton>
       </Box>
     </Box>

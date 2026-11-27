@@ -1,6 +1,6 @@
 # Natural Supplements
 
-Loja virtual de suplementos naturais feita em **React**, com design system próprio, carrinho persistente e uma **API própria em Node.js** como fonte dos produtos.
+Loja virtual de suplementos naturais feita em **React**, com design system próprio, animações com **Motion**, carrinho persistente e uma **API própria em Node.js** como fonte dos produtos.
 
 **[Ver a loja no ar](https://projeto-final-react-self.vercel.app)** · [Código da API](https://github.com/GustavoFaroni/loja-api)
 
@@ -8,6 +8,7 @@ Loja virtual de suplementos naturais feita em **React**, com design system próp
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
 ![MUI](https://img.shields.io/badge/Material_UI-7-007FFF?logo=mui&logoColor=white)
 ![React Router](https://img.shields.io/badge/React_Router-CA4245?logo=reactrouter&logoColor=white)
+![Motion](https://img.shields.io/badge/Motion-animações-FFF312?logo=framer&logoColor=black)
 ![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)
 
 ![Página inicial da Natural Supplements](docs/home.webp)
@@ -36,8 +37,15 @@ Loja virtual de suplementos naturais feita em **React**, com design system próp
 - **Carrinho** com ajuste de quantidade, remoção com opção de **desfazer**, resumo do pedido e finalização simulada.
 - **Carrinho salvo no navegador** (`localStorage`): continua lá depois de recarregar a página.
 - **Páginas Sobre e Contato**, com formulário validado campo a campo.
+- **Animações com propósito** (Motion):
+  - abertura da Home com os produtos "pousando" na prateleira, só na primeira visita;
+  - a foto do produto voa até o carrinho ao adicionar, e o ícone dá um pulo quando ela chega;
+  - itens do carrinho deslizam ao sair e voltam com "desfazer";
+  - o número da quantidade rola para cima ou para baixo;
+  - troca de página com transição suave.
 - **Layout responsivo**: 4 colunas no desktop, 3 no tablet e 2 no celular.
-- Estados de **carregamento, erro e vazio** em todas as telas que dependem de dados.
+- Estados de **carregamento (esqueletos no formato dos cards), erro e vazio** em todas as telas que dependem de dados.
+- **Prévia do link** (Open Graph) ao compartilhar no LinkedIn ou no WhatsApp.
 - Página **404** para endereços inexistentes.
 
 > É uma loja de demonstração: nenhum pagamento é cobrado e o formulário de contato não envia mensagens.
@@ -56,6 +64,7 @@ Loja virtual de suplementos naturais feita em **React**, com design system próp
 | [Vite](https://vite.dev) | Servidor de desenvolvimento e build |
 | [Material UI 7](https://mui.com) | Componentes, tema e grid |
 | [React Router](https://reactrouter.com) | Rotas e navegação |
+| [Motion](https://motion.dev) | Animações (antigo Framer Motion) |
 | Context API | Estado global do carrinho |
 | [Axios](https://axios-http.com) | Chamadas à API |
 | [Loja API](https://github.com/GustavoFaroni/loja-api) | Back-end próprio em Node.js, Express e MongoDB |
@@ -119,13 +128,15 @@ Identidade **natural e calma**, pensada para quem busca bem-estar no dia a dia.
 - Botões de ícone com nome para leitores de tela.
 - Campos com rótulo, erro logo abaixo e foco no primeiro campo errado ao enviar.
 - Título da aba diferente em cada página.
-- Respeita a opção "reduzir movimento" do sistema.
+- Respeita a opção "reduzir movimento" do sistema: as animações viram fades curtos ou somem.
+- Ações do carrinho anunciadas para leitores de tela.
 
 **Desempenho**
 - Fotos em WebP com cerca de 15 KB cada (antes, 5 MB).
 - Cada página baixa o próprio código (`React.lazy`), e Produto e Carrinho são pré-carregados quando o navegador fica livre. O pacote inicial caiu 18%.
 - Lista de produtos guardada em memória: voltar para a Home não chama a API de novo.
 - Contexto do carrinho memorizado, para não renderizar componentes à toa.
+- Código das animações carregado à parte (`LazyMotion`), depois do primeiro desenho da página.
 
 ## Como rodar localmente
 
@@ -165,6 +176,8 @@ VITE_API_URL=http://localhost:3000/api
 - **Context API em vez de Redux:** o único estado global é o carrinho. Uma biblioteca de estado seria peso a mais para esse tamanho.
 - **Carrinho com chave versionada** (`natural-supplements:carrinho:v1`): se o formato salvo mudar, basta trocar a versão para ignorar dados antigos, em vez de quebrar a página.
 - **Fotos servidas pela loja:** a API guarda só o caminho (`/produtos/creatina.webp`). Se uma foto faltar, a loja mostra uma imagem padrão em vez de um ícone quebrado.
+- **Motion em vez de animações em CSS puro:** as animações dependem de estado (de onde a foto sai, para onde vai, qual item saiu da lista). O Motion resolve animações de layout e de saída de elementos, que em CSS exigiriam bastante código manual.
+- **Pouco movimento automático:** só a abertura da Home se mexe sozinha. Todo o resto responde a uma ação da pessoa e mostra o que mudou.
 - **`vercel.json` com rewrite:** garante que recarregar a página em `/carrinho` ou `/sobre` funcione na Vercel.
 
 ## Próximos passos

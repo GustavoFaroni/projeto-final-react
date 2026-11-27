@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useProduto } from '../../hooks/useProdutos';
 import { useCart } from '../../context/CartContext';
+import { useVooCarrinho } from '../../context/VooCarrinhoContext';
 import { formatarPreco, precoFinal } from '../../utils/preco';
 import { percentualDesconto, resumoAvaliacoes, temPromocao } from '../../utils/produto';
 import SeletorQuantidade from '../atoms/SeletorQuantidade';
@@ -33,6 +34,8 @@ const Produto = () => {
   const navigate = useNavigate();
   const { produto, carregando } = useProduto(id);
   const { adicionarItem } = useCart();
+  const { voarParaCarrinho } = useVooCarrinho();
+  const imagemRef = useRef(null);
   const [fotoAtual, setFotoAtual] = useState(0);
   const [quantidade, setQuantidade] = useState(1);
   const [adicionado, setAdicionado] = useState(false);
@@ -72,6 +75,7 @@ const Produto = () => {
       { _id: produto._id, nome: produto.nome, preco: precoFinal(produto), fornecedor: produto.fornecedor?.nome, imagem: produto.imagem },
       quantidade
     );
+    voarParaCarrinho(imagemRef.current);
     setAdicionado(true);
     setQuantidade(1);
   };
@@ -91,6 +95,7 @@ const Produto = () => {
           <Box sx={{ position: 'relative', aspectRatio: '1', bgcolor: 'sage', borderRadius: '16px', overflow: 'hidden' }}>
             <Box
               component="img"
+              ref={imagemRef}
               src={fotos[fotoAtual] ?? fotos[0]}
               onError={usarImagemPadraoSeFalhar}
               alt={fotos.length > 1 ? `${produto.nome}, foto ${fotoAtual + 1} de ${fotos.length}` : produto.nome}

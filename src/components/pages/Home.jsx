@@ -1,27 +1,61 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { m } from 'motion/react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import Link from '@mui/material/Link';
-import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ProdutoCard from '../molecules/card';
+import CardEsqueleto from '../molecules/CardEsqueleto';
+import AvisoLeitorDeTela from '../atoms/AvisoLeitorDeTela';
+import { useVooCarrinho } from '../../context/VooCarrinhoContext';
 import { useProdutos } from '../../hooks/useProdutos';
 import { useCart } from '../../context/CartContext';
 import { precoFinal } from '../../utils/preco';
 import { useTituloPagina } from '../../hooks/useTituloPagina';
-import heroImg from '../../assets/img/hero.webp';
+import PrateleiraHero from '../molecules/PrateleiraHero';
 import { preCarregarPaginas } from '../../rotas';
+
+const SUAVE = [0.22, 1, 0.36, 1];
+
+// A abertura anima só na primeira visita da sessão; ao voltar para a Home, ela já aparece pronta.
+let aberturaJaExibida = false;
+
+// Cada linha do título sobe de dentro de uma "janela" (overflow: hidden).
+function LinhaTitulo({ children, atraso, animar }) {
+  return (
+    <Box component="span" sx={{ display: 'block', overflow: 'hidden', pb: '0.08em' }}>
+      <m.span
+        style={{ display: 'block' }}
+        initial={animar ? { y: '105%' } : false}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.8, ease: SUAVE, delay: atraso }}
+      >
+        {children}
+      </m.span>
+    </Box>
+  );
+}
+
+const aparecer = (atraso, animar) => ({
+  initial: animar ? { opacity: 0, y: 12 } : false,
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, ease: SUAVE, delay: atraso },
+});
 
 const Home = () => {
   const { produtos, carregando, erro } = useProdutos();
   const { adicionarItem } = useCart();
+  const { voarParaCarrinho } = useVooCarrinho();
   const { hash } = useLocation();
   const [aviso, setAviso] = useState('');
   useTituloPagina();
+  const [animarAbertura] = useState(() => !aberturaJaExibida);
+
+  useEffect(() => {
+    aberturaJaExibida = true;
+  }, []);
 
   // Com a Home pronta, baixa em segundo plano as páginas de Produto e Carrinho.
   useEffect(() => {
@@ -36,7 +70,7 @@ const Home = () => {
     }
   }, [hash, carregando]);
 
-  const adicionar = (produto) => {
+  const adicionar = (produto, imagem) => {
     adicionarItem({
       _id: produto._id,
       nome: produto.nome,
@@ -44,6 +78,7 @@ const Home = () => {
       fornecedor: produto.fornecedor?.nome,
       imagem: produto.imagem,
     });
+    voarParaCarrinho(imagem);
     setAviso(`${produto.nome} foi adicionado ao carrinho`);
   };
 
@@ -64,16 +99,16 @@ const Home = () => {
         }}
       >
         <Box sx={{ flex: '1 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <Typography
-            variant="h1"
-            sx={{ fontSize: 'clamp(36px, 4.2vw, 52px)', lineHeight: 1.12, textWrap: 'balance' }}
-          >
-            Bem-estar começa nos pequenos hábitos.
+          <Typography variant="h1" sx={{ fontSize: 'clamp(36px, 4.2vw, 52px)', lineHeight: 1.12 }}>
+            <LinhaTitulo atraso={0.05} animar={animarAbertura}>Bem-estar começa</LinhaTitulo>
+            <LinhaTitulo atraso={0.15} animar={animarAbertura}>nos pequenos hábitos.</LinhaTitulo>
           </Typography>
-          <Typography sx={{ fontSize: 18, lineHeight: '28px', color: 'text.secondary', maxWidth: '46ch' }}>
-            Suplementos naturais escolhidos com cuidado, para acompanhar a sua rotina sem complicação.
-          </Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}>
+          <m.p {...aparecer(0.35, animarAbertura)} style={{ margin: 0 }}>
+            <Typography component="span" sx={{ display: 'block', fontSize: 18, lineHeight: '28px', color: 'text.secondary', maxWidth: '46ch' }}>
+              Suplementos naturais escolhidos com cuidado, para acompanhar a sua rotina sem complicação.
+            </Typography>
+          </m.p>
+          <Box component={m.div} {...aparecer(0.45, animarAbertura)} sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}>
             <Button variant="contained" size="large" href="#mais-vendidos" sx={{ minHeight: 48, px: 3.5, fontSize: 16 }}>
               Ver produtos
             </Button>
@@ -83,18 +118,8 @@ const Home = () => {
           </Box>
         </Box>
 
-        <Box
-          sx={{ flex: '1 1 320px', minWidth: 0, aspectRatio: '5 / 4', borderRadius: '16px', overflow: 'hidden', bgcolor: 'sage' }}
-        >
-          <Box
-            component="img"
-            src={heroImg}
-            alt="Frasco de vitamina C deitado com cápsulas verdes espalhadas"
-            width={1000}
-            height={800}
-            fetchPriority="high"
-            sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-          />
+        <Box sx={{ flex: '1 1 320px', minWidth: 0 }}>
+          <PrateleiraHero animar={animarAbertura} />
         </Box>
       </Box>
 
@@ -103,15 +128,11 @@ const Home = () => {
           Mais vendidos
         </Typography>
 
-        {carregando && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-            <CircularProgress aria-label="Carregando produtos" />
-          </Box>
-        )}
+        <AvisoLeitorDeTela>{carregando ? 'Carregando produtos' : aviso}</AvisoLeitorDeTela>
 
         {erro && <Alert severity="error">Não foi possível carregar os produtos. Tente recarregar a página.</Alert>}
 
-        {!carregando && !erro && (
+        {!erro && (
           <Box
             sx={{
               display: 'grid',
@@ -123,23 +144,15 @@ const Home = () => {
               },
             }}
           >
-            {produtos.map((produto) => (
-              <ProdutoCard key={produto._id} produto={produto} onAdicionar={adicionar} />
-            ))}
+            {carregando
+              ? Array.from({ length: 4 }, (_, i) => <CardEsqueleto key={i} />)
+              : produtos.map((produto) => (
+                  <ProdutoCard key={produto._id} produto={produto} onAdicionar={adicionar} />
+                ))}
           </Box>
         )}
       </Box>
 
-      <Snackbar
-        open={Boolean(aviso)}
-        autoHideDuration={3000}
-        onClose={() => setAviso('')}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert icon={<CheckCircleOutlineIcon />} severity="success" variant="filled" onClose={() => setAviso('')}>
-          {aviso}
-        </Alert>
-      </Snackbar>
     </>
   );
 };
